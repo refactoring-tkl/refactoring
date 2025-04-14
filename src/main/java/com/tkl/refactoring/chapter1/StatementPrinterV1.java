@@ -8,23 +8,31 @@ import java.util.Map;
 public class StatementPrinterV1 {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
-        int totalAmount = 0;
-        int volumeCredits = 0;
         String result = String.format("Statement for %s\n", invoice.customer());
-
         NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
         for (Performance perf : invoice.performances()) {
-//            Play play = plays.get(perf.playID());
-
-            volumeCredits += volumeCreditsFor(perf);
-
-            // print line for this order
             result += String.format("  %s: %s (%s seats)\n", playFor(perf).name(), frmt.format(amountFor(perf) / 100), perf.audience());
-            totalAmount += amountFor(perf);
         }
-        result += String.format("Amount owed is %s\n", frmt.format(totalAmount / 100));
-        result += String.format("You earned %s credits\n", volumeCredits);
+
+        result += String.format("Amount owed is %s\n", frmt.format(totalAmount(invoice) / 100));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice));
+        return result;
+    }
+
+    private static int totalAmount(Invoice invoice) {
+        int result = 0;
+        for (Performance perf : invoice.performances()) {
+            result += amountFor(perf);
+        }
+        return result;
+    }
+
+    private static int totalVolumeCredits(Invoice invoice) {
+        int result = 0;
+        for (Performance perf : invoice.performances()) {
+            result += volumeCreditsFor(perf);
+        }
         return result;
     }
 
