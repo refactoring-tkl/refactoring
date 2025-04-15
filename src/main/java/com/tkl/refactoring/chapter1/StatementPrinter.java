@@ -14,12 +14,17 @@ public class StatementPrinter {
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
             int thisAmount = amountFor(perf, play);
-            volumeCredits += volumeCreditsFor(perf, play);
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(thisAmount), perf.audience());
             totalAmount += thisAmount;
         }
+
+        for (Performance perf : invoice.performances()) {
+            Play play = plays.get(perf.playID());
+            volumeCredits += volumeCreditsFor(perf, play);
+        }
+
         result += String.format("Amount owed is %s\n", usd(totalAmount));
         result += String.format("You earned %s credits\n", volumeCredits);
         return result;
