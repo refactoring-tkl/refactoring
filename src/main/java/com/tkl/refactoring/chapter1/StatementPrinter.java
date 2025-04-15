@@ -11,10 +11,9 @@ public class StatementPrinter {
 
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
-            int thisAmount = amountFor(perf, play);
 
             // print line for this order
-            result += String.format("  %s: %s (%s seats)\n", play.name(), usd(thisAmount), perf.audience());
+            result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
         }
 
         result += String.format("Amount owed is %s\n", usd(totalAmount(invoice, plays)));
