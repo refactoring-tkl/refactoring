@@ -27,12 +27,12 @@ public class StatementPrinter {
     }
 
     private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
-        int volumeCredits = 0;
+        int result = 0;
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
-            volumeCredits += volumeCreditsFor(perf, play);
+            result += volumeCreditsFor(perf, play);
         }
-        return volumeCredits;
+        return result;
     }
 
     private static String usd(int thisAmount) {
