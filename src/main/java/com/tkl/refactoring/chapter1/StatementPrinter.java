@@ -17,9 +17,7 @@ public class StatementPrinter {
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(thisAmount), perf.audience());
         }
 
-        int totalAmount = totalAmount(invoice, plays);
-
-        result += String.format("Amount owed is %s\n", usd(totalAmount));
+        result += String.format("Amount owed is %s\n", usd(totalAmount(invoice, plays)));
         result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
         return result;
     }
