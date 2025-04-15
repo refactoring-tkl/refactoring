@@ -19,10 +19,8 @@ public class StatementPrinter {
             totalAmount += thisAmount;
         }
 
-        int volumeCredits = totalVolumeCredits(invoice, plays);
-
         result += String.format("Amount owed is %s\n", usd(totalAmount));
-        result += String.format("You earned %s credits\n", volumeCredits);
+        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
         return result;
     }
 
