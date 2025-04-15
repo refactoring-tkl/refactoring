@@ -22,14 +22,14 @@ public class StatementPrinter {
     }
 
     private int totalAmount(Invoice invoice, Map<String, Play> plays) {
-        int totalAmount = 0;
+        int result = 0;
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
             int thisAmount = amountFor(perf, play);
 
-            totalAmount += thisAmount;
+            result += thisAmount;
         }
-        return totalAmount;
+        return result;
     }
 
     private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
