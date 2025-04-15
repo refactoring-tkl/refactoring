@@ -19,15 +19,20 @@ public class StatementPrinter {
             totalAmount += thisAmount;
         }
 
+        int volumeCredits = totalVolumeCredits(invoice, plays);
+
+        result += String.format("Amount owed is %s\n", usd(totalAmount));
+        result += String.format("You earned %s credits\n", volumeCredits);
+        return result;
+    }
+
+    private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
         int volumeCredits = 0;
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
             volumeCredits += volumeCreditsFor(perf, play);
         }
-
-        result += String.format("Amount owed is %s\n", usd(totalAmount));
-        result += String.format("You earned %s credits\n", volumeCredits);
-        return result;
+        return volumeCredits;
     }
 
     private static String usd(int thisAmount) {
