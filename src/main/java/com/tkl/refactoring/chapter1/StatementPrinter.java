@@ -17,6 +17,14 @@ public class StatementPrinter {
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(thisAmount), perf.audience());
         }
 
+        int totalAmount = totalAmount(invoice, plays);
+
+        result += String.format("Amount owed is %s\n", usd(totalAmount));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
+        return result;
+    }
+
+    private int totalAmount(Invoice invoice, Map<String, Play> plays) {
         int totalAmount = 0;
         for (Performance perf : invoice.performances()) {
             Play play = plays.get(perf.playID());
@@ -24,10 +32,7 @@ public class StatementPrinter {
 
             totalAmount += thisAmount;
         }
-
-        result += String.format("Amount owed is %s\n", usd(totalAmount));
-        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
-        return result;
+        return totalAmount;
     }
 
     private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
