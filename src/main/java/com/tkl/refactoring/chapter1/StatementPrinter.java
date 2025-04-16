@@ -7,17 +7,22 @@ import java.util.Map;
 public class StatementPrinter {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
-        String result = String.format("Statement for %s\n", invoice.customer());
+        StatementData statementData = new StatementData(invoice, plays);
+        return renderPlainText(statementData, plays);
+    }
 
-        for (Performance perf : invoice.performances()) {
+    private String renderPlainText(StatementData statementData, Map<String, Play> plays) {
+        String result = String.format("Statement for %s\n", statementData.customer());
+
+        for (Performance perf : statementData.invoice().performances()) {
             Play play = plays.get(perf.playID());
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
         }
 
-        result += String.format("Amount owed is %s\n", usd(totalAmount(invoice, plays)));
-        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
+        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.invoice(), plays)));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.invoice(), plays));
         return result;
     }
 
@@ -76,4 +81,28 @@ public class StatementPrinter {
         return result;
     }
 
+    private static class StatementData {
+        private final Invoice invoice;
+        private final Map<String, Play> plays;
+        private final String customer;
+
+        public StatementData(Invoice invoice, Map<String, Play> plays) {
+            this.customer = invoice.customer();
+            this.invoice = invoice;
+            this.plays = plays;
+        }
+
+        public Invoice invoice() {
+            return invoice;
+        }
+
+        public Map<String, Play> plays() {
+            return plays;
+        }
+
+        public String customer() {
+            return customer;
+        }
+
+    }
 }
