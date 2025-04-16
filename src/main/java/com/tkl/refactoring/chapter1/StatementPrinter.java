@@ -1,6 +1,8 @@
 package com.tkl.refactoring.chapter1;
 
 import java.text.NumberFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,21 +16,21 @@ public class StatementPrinter {
     private String renderPlainText(StatementData statementData, Map<String, Play> plays) {
         String result = String.format("Statement for %s\n", statementData.customer());
 
-        for (Performance perf : statementData.invoice().performances()) {
+        for (Performance perf : statementData.performances()) {
             Play play = plays.get(perf.playID());
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
         }
 
-        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.invoice(), plays)));
-        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.invoice(), plays));
+        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances(), plays)));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances(), plays));
         return result;
     }
 
-    private int totalAmount(Invoice invoice, Map<String, Play> plays) {
+    private int totalAmount(List<Performance> performances, Map<String, Play> plays) {
         int result = 0;
-        for (Performance perf : invoice.performances()) {
+        for (Performance perf : performances) {
             Play play = plays.get(perf.playID());
             int thisAmount = amountFor(perf, play);
 
@@ -37,9 +39,9 @@ public class StatementPrinter {
         return result;
     }
 
-    private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
+    private int totalVolumeCredits(List<Performance> performances, Map<String, Play> plays) {
         int result = 0;
-        for (Performance perf : invoice.performances()) {
+        for (Performance perf : performances) {
             Play play = plays.get(perf.playID());
             result += volumeCreditsFor(perf, play);
         }
@@ -82,18 +84,18 @@ public class StatementPrinter {
     }
 
     private static class StatementData {
-        private final Invoice invoice;
+        private final List<Performance> performances;
         private final Map<String, Play> plays;
         private final String customer;
 
         public StatementData(Invoice invoice, Map<String, Play> plays) {
             this.customer = invoice.customer();
-            this.invoice = invoice;
+            this.performances = Collections.unmodifiableList(invoice.performances());
             this.plays = plays;
         }
 
-        public Invoice invoice() {
-            return invoice;
+        public List<Performance> performances() {
+            return performances;
         }
 
         public Map<String, Play> plays() {
