@@ -10,21 +10,21 @@ public class StatementPrinter {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
         StatementData statementData = new StatementData(invoice, plays);
-        return renderPlainText(statementData, plays);
+        return renderPlainText(statementData);
     }
 
-    private String renderPlainText(StatementData statementData, Map<String, Play> plays) {
+    private String renderPlainText(StatementData statementData) {
         String result = String.format("Statement for %s\n", statementData.customer());
 
         for (Performance perf : statementData.performances()) {
-            Play play = plays.get(perf.playID());
+            Play play = statementData.plays().get(perf.playID());
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
         }
 
-        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances(), plays)));
-        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances(), plays));
+        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances(), statementData.plays())));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances(), statementData.plays()));
         return result;
     }
 
