@@ -96,18 +96,7 @@ public class StatementPrinter {
 		private int calculateTotalVolumeCredits() {
 			int result = 0;
 			for (StatementData.StatementPerformance perf : performances) {
-				result += volumeCreditsFor(perf);
-			}
-			return result;
-		}
-
-		private int volumeCreditsFor(StatementData.StatementPerformance perf) {
-			int result = 0;
-			// add volume credits
-			result += Math.max(perf.audience() - 30, 0);
-			// add extra credit for every ten comedy attendees
-			if ("comedy".equals(perf.play().type())) {
-				result += perf.audience() / 5;
+				result += perf.volumeCredits();
 			}
 			return result;
 		}
@@ -116,11 +105,13 @@ public class StatementPrinter {
 			private final int audience;
 			private final Play play;
 			private final int amount;
+			private final int volumeCredits;
 
 			public StatementPerformance(Performance performance, Play play) {
 				this.audience = performance.audience();
 				this.play = play;
 				this.amount = amountFor();
+				this.volumeCredits = volumeCreditsFor();
 			}
 
 			public int audience() {
@@ -133,6 +124,10 @@ public class StatementPrinter {
 
 			public int amount() {
 				return amount;
+			}
+
+			public int volumeCredits() {
+				return volumeCredits;
 			}
 
 			private int amountFor() {
@@ -153,6 +148,17 @@ public class StatementPrinter {
 						break;
 					default:
 						throw new Error("unknown type: ${play.type}");
+				}
+				return result;
+			}
+
+			private int volumeCreditsFor() {
+				int result = 0;
+				// add volume credits
+				result += Math.max(this.audience - 30, 0);
+				// add extra credit for every ten comedy attendees
+				if ("comedy".equals(this.play.type())) {
+					result += this.audience / 5;
 				}
 				return result;
 			}
