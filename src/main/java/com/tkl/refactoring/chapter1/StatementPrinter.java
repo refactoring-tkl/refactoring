@@ -21,31 +21,12 @@ public class StatementPrinter {
 		}
 
 		result += String.format("Amount owed is %s\n", usd(statementData.totalAmount()));
-		result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances()));
-		return result;
-	}
-
-	private int totalVolumeCredits(List<StatementData.StatementPerformance> performances) {
-		int result = 0;
-		for (StatementData.StatementPerformance perf : performances) {
-			result += volumeCreditsFor(perf);
-		}
+		result += String.format("You earned %s credits\n", statementData.totalVolumeCredits());
 		return result;
 	}
 
 	private static String usd(int thisAmount) {
 		return NumberFormat.getCurrencyInstance(Locale.US).format(thisAmount / 100);
-	}
-
-	private static int volumeCreditsFor(StatementData.StatementPerformance perf) {
-		int result = 0;
-		// add volume credits
-		result += Math.max(perf.audience() - 30, 0);
-		// add extra credit for every ten comedy attendees
-		if ("comedy".equals(perf.play().type())) {
-			result += perf.audience() / 5;
-		}
-		return result;
 	}
 
 	private int amountFor(StatementData.StatementPerformance perf) {
@@ -74,6 +55,7 @@ public class StatementPrinter {
 		private final String customer;
 		private final List<StatementPerformance> performances;
 		private final int totalAmount;
+		private final int totalVolumeCredits;
 
 		public StatementData(Invoice invoice, Map<String, Play> plays) {
 			this.customer = invoice.customer();
@@ -82,6 +64,7 @@ public class StatementPrinter {
 													performance.playID())))
 									   .toList();
 			this.totalAmount = calculateTotalAmount();
+			this.totalVolumeCredits = calculateTotalVolumeCredits();
 		}
 
 		public String customer() {
@@ -96,12 +79,35 @@ public class StatementPrinter {
 			return totalAmount;
 		}
 
+		public int totalVolumeCredits() {
+			return totalVolumeCredits;
+		}
+
 		private int calculateTotalAmount() {
 			int result = 0;
 			for (StatementData.StatementPerformance perf : performances) {
 				int thisAmount = perf.amount();
 
 				result += thisAmount;
+			}
+			return result;
+		}
+
+		private int calculateTotalVolumeCredits() {
+			int result = 0;
+			for (StatementData.StatementPerformance perf : performances) {
+				result += volumeCreditsFor(perf);
+			}
+			return result;
+		}
+
+		private int volumeCreditsFor(StatementData.StatementPerformance perf) {
+			int result = 0;
+			// add volume credits
+			result += Math.max(perf.audience() - 30, 0);
+			// add extra credit for every ten comedy attendees
+			if ("comedy".equals(perf.play().type())) {
+				result += perf.audience() / 5;
 			}
 			return result;
 		}
