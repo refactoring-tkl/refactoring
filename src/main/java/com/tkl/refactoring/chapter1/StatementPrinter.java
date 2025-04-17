@@ -17,7 +17,7 @@ public class StatementPrinter {
 
 		for (StatementData.StatementPerformance perf : statementData.performances()) {
 			// print line for this order
-			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(amountFor(perf)), perf.audience());
+			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(perf.amount()), perf.audience());
 		}
 
 		result += String.format("Amount owed is %s\n", usd(statementData.totalAmount()));
@@ -27,28 +27,6 @@ public class StatementPrinter {
 
 	private static String usd(int thisAmount) {
 		return NumberFormat.getCurrencyInstance(Locale.US).format(thisAmount / 100);
-	}
-
-	private int amountFor(StatementData.StatementPerformance perf) {
-		int result;
-		switch (perf.play().type()) {
-			case "tragedy":
-				result = 40000;
-				if (perf.audience() > 30) {
-					result += 1000 * (perf.audience() - 30);
-				}
-				break;
-			case "comedy":
-				result = 30000;
-				if (perf.audience() > 20) {
-					result += 10000 + 500 * (perf.audience() - 20);
-				}
-				result += 300 * perf.audience();
-				break;
-			default:
-				throw new Error("unknown type: ${play.type}");
-		}
-		return result;
 	}
 
 	private static class StatementData {
