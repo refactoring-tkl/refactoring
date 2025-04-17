@@ -1,11 +1,9 @@
 package com.tkl.refactoring.chapter1;
 
 import java.text.NumberFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class StatementPrinter {
 
@@ -17,15 +15,15 @@ public class StatementPrinter {
 	private String renderPlainText(StatementData statementData) {
 		String result = String.format("Statement for %s\n", statementData.customer());
 
-		for (StatementData.StatementPerformance perf : statementData.performances_temp()) {
+		for (StatementData.StatementPerformance perf : statementData.performances()) {
 			Play play = perf.play();
 
 			// print line for this order
 			result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
 		}
 
-		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances_temp())));
-		result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances_temp()));
+		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances())));
+		result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances()));
 		return result;
 	}
 
@@ -88,22 +86,22 @@ public class StatementPrinter {
 
 	private static class StatementData {
 		private final String customer;
-		private final List<StatementPerformance> performances_temp;
+		private final List<StatementPerformance> performances;
 
 		public StatementData(Invoice invoice, Map<String, Play> plays) {
 			this.customer = invoice.customer();
-			this.performances_temp = invoice.performances().stream()
-											.map(performance -> new StatementPerformance(performance, plays.get(
+			this.performances = invoice.performances().stream()
+									   .map(performance -> new StatementPerformance(performance, plays.get(
 													performance.playID())))
-											.toList();
+									   .toList();
 		}
 
 		public String customer() {
 			return customer;
 		}
 
-		public List<StatementPerformance> performances_temp() {
-			return performances_temp;
+		public List<StatementPerformance> performances() {
+			return performances;
 		}
 
 		static class StatementPerformance {
