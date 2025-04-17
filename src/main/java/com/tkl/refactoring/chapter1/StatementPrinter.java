@@ -62,21 +62,15 @@ public class StatementPrinter {
 		}
 
 		private int calculateTotalAmount() {
-			int result = 0;
-			for (StatementData.StatementPerformance perf : performances) {
-				int thisAmount = perf.amount();
-
-				result += thisAmount;
-			}
-			return result;
+			return performances.stream()
+								  .mapToInt(StatementPerformance::amount)
+								  .sum();
 		}
 
 		private int calculateTotalVolumeCredits() {
-			int result = 0;
-			for (StatementData.StatementPerformance perf : performances) {
-				result += perf.volumeCredits();
-			}
-			return result;
+			return performances.stream()
+					.mapToInt(StatementPerformance::volumeCredits)
+					.sum();
 		}
 
 		static class StatementPerformance {
