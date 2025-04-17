@@ -16,10 +16,8 @@ public class StatementPrinter {
 		String result = String.format("Statement for %s\n", statementData.customer());
 
 		for (StatementData.StatementPerformance perf : statementData.performances()) {
-			Play play = perf.play();
-
 			// print line for this order
-			result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
+			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(amountFor(perf, perf.play())), perf.audience());
 		}
 
 		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances())));
@@ -30,8 +28,7 @@ public class StatementPrinter {
 	private int totalAmount(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
-			Play play = perf.play();
-			int thisAmount = amountFor(perf, play);
+			int thisAmount = amountFor(perf, perf.play());
 
 			result += thisAmount;
 		}
@@ -41,8 +38,7 @@ public class StatementPrinter {
 	private int totalVolumeCredits(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
-			Play play = perf.play();
-			result += volumeCreditsFor(perf, play);
+			result += volumeCreditsFor(perf, perf.play());
 		}
 		return result;
 	}
