@@ -24,12 +24,12 @@ public class StatementPrinter {
 			result += String.format("  %s: %s (%s seats)\n", play.name(), usd(amountFor(perf, play)), perf.audience());
 		}
 
-		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances_temp(), statementData.plays())));
-		result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances_temp(), statementData.plays()));
+		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances_temp())));
+		result += String.format("You earned %s credits\n", totalVolumeCredits(statementData.performances_temp()));
 		return result;
 	}
 
-	private int totalAmount(List<StatementData.StatementPerformance> performances, Map<String, Play> plays) {
+	private int totalAmount(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
 			Play play = perf.play();
@@ -40,7 +40,7 @@ public class StatementPrinter {
 		return result;
 	}
 
-	private int totalVolumeCredits(List<StatementData.StatementPerformance> performances, Map<String, Play> plays) {
+	private int totalVolumeCredits(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
 			Play play = perf.play();
@@ -87,8 +87,6 @@ public class StatementPrinter {
 	}
 
 	private static class StatementData {
-		private final List<Performance> performances;
-		private final Map<String, Play> plays;
 		private final String customer;
 		private final List<StatementPerformance> performances_temp;
 
@@ -98,16 +96,6 @@ public class StatementPrinter {
 											.map(performance -> new StatementPerformance(performance, plays.get(
 													performance.playID())))
 											.toList();
-			this.performances = Collections.unmodifiableList(invoice.performances());
-			this.plays = plays;
-		}
-
-		public List<Performance> performances() {
-			return performances;
-		}
-
-		public Map<String, Play> plays() {
-			return plays;
 		}
 
 		public String customer() {
