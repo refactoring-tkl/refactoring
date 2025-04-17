@@ -17,7 +17,7 @@ public class StatementPrinter {
 
 		for (StatementData.StatementPerformance perf : statementData.performances()) {
 			// print line for this order
-			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(amountFor(perf, perf.play())), perf.audience());
+			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(amountFor(perf)), perf.audience());
 		}
 
 		result += String.format("Amount owed is %s\n", usd(totalAmount(statementData.performances())));
@@ -28,7 +28,7 @@ public class StatementPrinter {
 	private int totalAmount(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
-			int thisAmount = amountFor(perf, perf.play());
+			int thisAmount = amountFor(perf);
 
 			result += thisAmount;
 		}
@@ -38,7 +38,7 @@ public class StatementPrinter {
 	private int totalVolumeCredits(List<StatementData.StatementPerformance> performances) {
 		int result = 0;
 		for (StatementData.StatementPerformance perf : performances) {
-			result += volumeCreditsFor(perf, perf.play());
+			result += volumeCreditsFor(perf);
 		}
 		return result;
 	}
@@ -47,20 +47,20 @@ public class StatementPrinter {
 		return NumberFormat.getCurrencyInstance(Locale.US).format(thisAmount / 100);
 	}
 
-	private static int volumeCreditsFor(StatementData.StatementPerformance perf, Play play) {
+	private static int volumeCreditsFor(StatementData.StatementPerformance perf) {
 		int result = 0;
 		// add volume credits
 		result += Math.max(perf.audience() - 30, 0);
 		// add extra credit for every ten comedy attendees
-		if ("comedy".equals(play.type())) {
+		if ("comedy".equals(perf.play().type())) {
 			result += perf.audience() / 5;
 		}
 		return result;
 	}
 
-	private int amountFor(StatementData.StatementPerformance perf, Play play) {
+	private int amountFor(StatementData.StatementPerformance perf) {
 		int result;
-		switch (play.type()) {
+		switch (perf.play().type()) {
 			case "tragedy":
 				result = 40000;
 				if (perf.audience() > 30) {
