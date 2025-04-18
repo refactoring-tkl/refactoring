@@ -8,8 +8,16 @@ import java.util.Map;
 public class StatementPrinter {
 
 	public String print(Invoice invoice, Map<String, Play> plays) {
-		StatementData statementData = new StatementData(invoice, plays);
-		return renderPlainText(statementData);
+		return renderPlainText(new StatementData(invoice, plays));
+	}
+
+	public String printHtml(Invoice invoice, Map<String, Play> plays) {
+		return renderHtml(new StatementData(invoice, plays));
+	}
+
+	private String renderHtml(StatementData statementData) {
+		// html 태그 추가
+		return null;
 	}
 
 	private String renderPlainText(StatementData statementData) {
