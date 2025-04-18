@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StatementPrinter {
 
@@ -37,7 +38,7 @@ public class StatementPrinter {
 		return NumberFormat.getCurrencyInstance(Locale.US).format(thisAmount / 100);
 	}
 
-	private static class Statement {
+	private static class Statement { // todo: 별도 도메인 클래스로 분리
 		private final String customer;
 		private final List<StatementPerformance> performances;
 		private final int totalAmount;
@@ -48,7 +49,7 @@ public class StatementPrinter {
 			this.performances = invoice.performances().stream()
 									   .map(performance -> new StatementPerformance(performance, plays.get(
 													performance.playID())))
-									   .toList();
+									   .collect(Collectors.toUnmodifiableList());
 			this.totalAmount = calculateTotalAmount();
 			this.totalVolumeCredits = calculateTotalVolumeCredits();
 		}
