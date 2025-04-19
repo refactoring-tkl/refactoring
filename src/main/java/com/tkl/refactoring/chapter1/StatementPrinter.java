@@ -125,7 +125,7 @@ public class StatementPrinter {
 		}
 	}
 
-	static class PerformanceCalculator {
+	static abstract class PerformanceCalculator {
 		protected final int audience;
 		protected final Play play;
 
@@ -134,16 +134,7 @@ public class StatementPrinter {
 			this.play = play;
 		}
 
-		public int amountFor() {
-			switch (this.play.type()) {
-				case "tragedy":
-					throw new RuntimeException("사용안함");
-				case "comedy":
-					throw new RuntimeException("사용안함");
-				default:
-					throw new Error("unknown type: ${play.type}");
-			}
-		}
+		public abstract int amountFor();
 	}
 
 	static class TragedyCalculator extends PerformanceCalculator {
