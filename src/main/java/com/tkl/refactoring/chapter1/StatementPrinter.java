@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class StatementPrinter {
 
@@ -49,7 +48,7 @@ public class StatementPrinter {
 			this.performances = invoice.performances().stream()
 									   .map(performance -> new StatementPerformance(performance, plays.get(
 													performance.playID())))
-									   .collect(Collectors.toUnmodifiableList());
+									   .toList();
 			this.totalAmount = calculateTotalAmount();
 			this.totalVolumeCredits = calculateTotalVolumeCredits();
 		}
