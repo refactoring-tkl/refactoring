@@ -127,11 +127,9 @@ public class StatementPrinter {
 
 	static abstract class PerformanceCalculator {
 		protected final int audience;
-		protected final Play play;
 
-		public PerformanceCalculator(int audience, Play play) {
+		public PerformanceCalculator(int audience) {
 			this.audience = audience;
-			this.play = play;
 		}
 
 		public abstract int amountFor();
@@ -139,8 +137,8 @@ public class StatementPrinter {
 
 	static class TragedyCalculator extends PerformanceCalculator {
 
-		public TragedyCalculator(int audience, Play play) {
-			super(audience, play);
+		public TragedyCalculator(int audience) {
+			super(audience);
 		}
 
 		@Override
@@ -155,8 +153,8 @@ public class StatementPrinter {
 
 	static class ComedyCalculator extends PerformanceCalculator {
 
-		public ComedyCalculator(int audience, Play play) {
-			super(audience, play);
+		public ComedyCalculator(int audience) {
+			super(audience);
 		}
 
 		@Override
@@ -173,8 +171,8 @@ public class StatementPrinter {
 	private static class PerformanceCalculatorFactory {
 		public static PerformanceCalculator create(int audience, Play play) {
             return switch (play.type()) {
-                case "tragedy" -> new TragedyCalculator(audience, play);
-                case "comedy" -> new ComedyCalculator(audience, play);
+                case "tragedy" -> new TragedyCalculator(audience);
+                case "comedy" -> new ComedyCalculator(audience);
                 default -> throw new Error("unknown type: ${play.type}");
             };
 		}
