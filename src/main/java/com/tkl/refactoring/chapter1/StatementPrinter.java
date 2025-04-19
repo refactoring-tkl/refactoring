@@ -91,7 +91,8 @@ public class StatementPrinter {
 			public StatementPerformance(Performance performance, Play play) {
 				this.audience = performance.audience();
 				this.play = play;
-				this.amount = amountFor();
+				PerformanceCalculator performanceCalculator = new PerformanceCalculator(this.audience, play);
+				this.amount = performanceCalculator.amountFor();
 				this.volumeCredits = volumeCreditsFor();
 			}
 
@@ -111,28 +112,6 @@ public class StatementPrinter {
 				return volumeCredits;
 			}
 
-			private int amountFor() {
-				int result;
-				switch (this.play.type()) {
-					case "tragedy":
-						result = 40000;
-						if (this.audience > 30) {
-							result += 1000 * (this.audience - 30);
-						}
-						break;
-					case "comedy":
-						result = 30000;
-						if (this.audience > 20) {
-							result += 10000 + 500 * (this.audience - 20);
-						}
-						result += 300 * this.audience;
-						break;
-					default:
-						throw new Error("unknown type: ${play.type}");
-				}
-				return result;
-			}
-
 			private int volumeCreditsFor() {
 				int result = 0;
 				// add volume credits
@@ -143,6 +122,38 @@ public class StatementPrinter {
 				}
 				return result;
 			}
+		}
+	}
+
+	static class PerformanceCalculator {
+		private final int audience;
+		private final Play play;
+
+		public PerformanceCalculator(int audience, Play play) {
+			this.audience = audience;
+			this.play = play;
+		}
+
+		public int amountFor() {
+			int result;
+			switch (this.play.type()) {
+				case "tragedy":
+					result = 40000;
+					if (this.audience > 30) {
+						result += 1000 * (this.audience - 30);
+					}
+					break;
+				case "comedy":
+					result = 30000;
+					if (this.audience > 20) {
+						result += 10000 + 500 * (this.audience - 20);
+					}
+					result += 300 * this.audience;
+					break;
+				default:
+					throw new Error("unknown type: ${play.type}");
+			}
+			return result;
 		}
 	}
 }
