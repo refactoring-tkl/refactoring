@@ -91,7 +91,7 @@ public class StatementPrinter {
 			public StatementPerformance(Performance performance, Play play) {
 				this.audience = performance.audience();
 				this.play = play;
-				PerformanceCalculator performanceCalculator = new PerformanceCalculator(this.audience, play);
+				PerformanceCalculator performanceCalculator = PerformanceCalculatorFactory.create(audience, play);
 				this.amount = performanceCalculator.amountFor();
 				this.volumeCredits = volumeCreditsFor();
 			}
@@ -138,11 +138,7 @@ public class StatementPrinter {
 			int result;
 			switch (this.play.type()) {
 				case "tragedy":
-					result = 40000;
-					if (this.audience > 30) {
-						result += 1000 * (this.audience - 30);
-					}
-					break;
+					throw new RuntimeException("사용안함");
 				case "comedy":
 					result = 30000;
 					if (this.audience > 20) {
@@ -154,6 +150,32 @@ public class StatementPrinter {
 					throw new Error("unknown type: ${play.type}");
 			}
 			return result;
+		}
+	}
+
+	static class TragedyCalculator extends PerformanceCalculator {
+
+		public TragedyCalculator(int audience, Play play) {
+			super(audience, play);
+		}
+
+		@Override
+		public int amountFor() {
+			int result = 40000;
+			if (super.audience > 30) {
+				result += 1000 * (super.audience - 30);
+			}
+			return result;
+		}
+	}
+
+	private static class PerformanceCalculatorFactory {
+		public static PerformanceCalculator create(int audience, Play play) {
+            return switch (play.type()) {
+                case "tragedy" -> new TragedyCalculator(audience, play);
+                case "comedy" -> new PerformanceCalculator(audience, play);
+                default -> throw new Error("unknown type: ${play.type}");
+            };
 		}
 	}
 }
