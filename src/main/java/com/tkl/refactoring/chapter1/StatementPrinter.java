@@ -126,8 +126,8 @@ public class StatementPrinter {
 	}
 
 	static class PerformanceCalculator {
-		private final int audience;
-		private final Play play;
+		protected final int audience;
+		protected final Play play;
 
 		public PerformanceCalculator(int audience, Play play) {
 			this.audience = audience;
@@ -135,21 +135,14 @@ public class StatementPrinter {
 		}
 
 		public int amountFor() {
-			int result;
 			switch (this.play.type()) {
 				case "tragedy":
 					throw new RuntimeException("사용안함");
 				case "comedy":
-					result = 30000;
-					if (this.audience > 20) {
-						result += 10000 + 500 * (this.audience - 20);
-					}
-					result += 300 * this.audience;
-					break;
+					throw new RuntimeException("사용안함");
 				default:
 					throw new Error("unknown type: ${play.type}");
 			}
-			return result;
 		}
 	}
 
@@ -169,11 +162,28 @@ public class StatementPrinter {
 		}
 	}
 
+	static class ComedyCalculator extends PerformanceCalculator {
+
+		public ComedyCalculator(int audience, Play play) {
+			super(audience, play);
+		}
+
+		@Override
+		public int amountFor() {
+			int result = 30000;
+			if (super.audience > 20) {
+				result += 10000 + 500 * (super.audience - 20);
+			}
+			result += 300 * super.audience;
+			return result;
+		}
+	}
+
 	private static class PerformanceCalculatorFactory {
 		public static PerformanceCalculator create(int audience, Play play) {
             return switch (play.type()) {
                 case "tragedy" -> new TragedyCalculator(audience, play);
-                case "comedy" -> new PerformanceCalculator(audience, play);
+                case "comedy" -> new ComedyCalculator(audience, play);
                 default -> throw new Error("unknown type: ${play.type}");
             };
 		}
