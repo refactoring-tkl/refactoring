@@ -49,8 +49,8 @@ public class StatementPrinter {
 									   .map(performance -> new StatementPerformance(performance, plays.get(
 													performance.playID())))
 									   .toList();
-			this.totalAmount = calculateTotalAmount();
-			this.totalVolumeCredits = calculateTotalVolumeCredits();
+			this.totalAmount = calculateTotalAmount(this.performances);
+			this.totalVolumeCredits = calculateTotalVolumeCredits(this.performances);
 		}
 
 		public String customer() {
@@ -69,13 +69,13 @@ public class StatementPrinter {
 			return totalVolumeCredits;
 		}
 
-		private int calculateTotalAmount() {
+		private int calculateTotalAmount(List<StatementPerformance> performances) {
 			return performances.stream()
 								  .mapToInt(StatementPerformance::amount)
 								  .sum();
 		}
 
-		private int calculateTotalVolumeCredits() {
+		private int calculateTotalVolumeCredits(List<StatementPerformance> performances) {
 			return performances.stream()
 					.mapToInt(StatementPerformance::volumeCredits)
 					.sum();
