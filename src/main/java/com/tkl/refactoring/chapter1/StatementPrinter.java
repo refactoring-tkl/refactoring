@@ -93,7 +93,7 @@ public class StatementPrinter {
 				this.play = play;
 				PerformanceCalculator performanceCalculator = PerformanceCalculatorFactory.create(audience, play);
 				this.amount = performanceCalculator.amountFor();
-				this.volumeCredits = volumeCreditsFor();
+				this.volumeCredits = performanceCalculator.volumeCreditsFor();
 			}
 
 			public int audience() {
@@ -111,17 +111,6 @@ public class StatementPrinter {
 			public int volumeCredits() {
 				return volumeCredits;
 			}
-
-			private int volumeCreditsFor() {
-				int result = 0;
-				// add volume credits
-				result += Math.max(this.audience - 30, 0);
-				// add extra credit for every ten comedy attendees
-				if ("comedy".equals(this.play.type())) {
-					result += this.audience / 5;
-				}
-				return result;
-			}
 		}
 	}
 
@@ -133,6 +122,14 @@ public class StatementPrinter {
 		}
 
 		abstract int amountFor();
+
+		final int volumeCreditsFor() {
+			return Math.max(this.audience - 30, 0) + extraVolumeCreditsFor();
+		}
+
+		protected int extraVolumeCreditsFor() {
+			return 0;
+		}
 	}
 
 	static class TragedyCalculator extends PerformanceCalculator {
@@ -165,6 +162,11 @@ public class StatementPrinter {
 			}
 			result += 300 * super.audience;
 			return result;
+		}
+
+		@Override
+		protected int extraVolumeCreditsFor() {
+			return this.audience / 5;
 		}
 	}
 
