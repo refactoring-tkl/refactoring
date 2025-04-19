@@ -132,7 +132,7 @@ public class StatementPrinter {
 			this.audience = audience;
 		}
 
-		public abstract int amountFor();
+		abstract int amountFor();
 	}
 
 	static class TragedyCalculator extends PerformanceCalculator {
