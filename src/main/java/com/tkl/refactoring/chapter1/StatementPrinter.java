@@ -16,13 +16,18 @@ public class StatementPrinter {
                 usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
         }
+        int totalAmount = getAmounts(invoice, plays);
+        result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
+        result += String.format("You earned %s credits\n", getVolumeCredits(invoice, plays));
+        return result;
+    }
+
+    private int getAmounts(Invoice invoice, Map<String, Play> plays) {
         int totalAmount = 0;
         for (Performance perf : invoice.performances()) {
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
-        result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(invoice, plays));
-        return result;
+        return totalAmount;
     }
 
     private int getVolumeCredits(Invoice invoice, Map<String, Play> plays) {
