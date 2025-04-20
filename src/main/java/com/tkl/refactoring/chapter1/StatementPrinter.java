@@ -11,19 +11,17 @@ public class StatementPrinter {
         int volumeCredits = 0;
         String result = String.format("Statement for %s\n", invoice.customer());
 
-        NumberFormat frmt = formatAsUSD();
-
         for (Performance perf : invoice.performances()) {
             volumeCredits += getVolumeCredits(plays, perf);
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
                 findByPerformancePlayId(plays, perf).name(),
-                frmt.format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
+                formatAsUSD().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
-        result += String.format("Amount owed is %s\n", frmt.format(totalAmount / 100));
+        result += String.format("Amount owed is %s\n", formatAsUSD().format(totalAmount / 100));
         result += String.format("You earned %s credits\n", volumeCredits);
         return result;
     }
