@@ -16,6 +16,8 @@ public class StatementPrinter {
                 findByPerformancePlayId(plays, perf).name(),
                 usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
+        }
+        for (Performance perf : invoice.performances()) {
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
         result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
