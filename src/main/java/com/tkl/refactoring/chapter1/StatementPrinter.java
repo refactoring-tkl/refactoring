@@ -8,7 +8,6 @@ public class StatementPrinter {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
         int totalAmount = 0;
-        int volumeCredits = 0;
         String result = String.format("Statement for %s\n", invoice.customer());
 
         for (Performance perf : invoice.performances()) {
@@ -19,6 +18,7 @@ public class StatementPrinter {
                 perf.audience());
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
+        int volumeCredits = 0;
         for (Performance perf : invoice.performances()) {
             volumeCredits += getVolumeCredits(plays, perf);
         }
