@@ -34,25 +34,25 @@ public class StatementPrinter {
     }
 
     private int getAmounts(Performance perf, Play play) {
-        int thisAmount = 0;
+        int amounts = 0;
         switch (play.type()) {
             case "tragedy":
-                thisAmount = 40000;
+                amounts = 40000;
                 if (perf.audience() > 30) {
-                    thisAmount += 1000 * (perf.audience() - 30);
+                    amounts += 1000 * (perf.audience() - 30);
                 }
                 break;
             case "comedy":
-                thisAmount = 30000;
+                amounts = 30000;
                 if (perf.audience() > 20) {
-                    thisAmount += 10000 + 500 * (perf.audience() - 20);
+                    amounts += 10000 + 500 * (perf.audience() - 20);
                 }
-                thisAmount += 300 * perf.audience();
+                amounts += 300 * perf.audience();
                 break;
             default:
                 throw new Error("unknown type: ${play.type}");
         }
-        return thisAmount;
+        return amounts;
     }
 
 }
