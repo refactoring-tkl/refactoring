@@ -7,7 +7,6 @@ import java.util.Map;
 public class StatementPrinter {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
-        int totalAmount = 0;
         String result = String.format("Statement for %s\n", invoice.customer());
 
         for (Performance perf : invoice.performances()) {
@@ -17,6 +16,7 @@ public class StatementPrinter {
                 usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
         }
+        int totalAmount = 0;
         for (Performance perf : invoice.performances()) {
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
