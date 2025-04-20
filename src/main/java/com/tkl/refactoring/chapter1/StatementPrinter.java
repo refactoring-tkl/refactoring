@@ -14,7 +14,7 @@ public class StatementPrinter {
         NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
         for (Performance perf : invoice.performances()) {
-            Play play = plays.get(perf.playID());
+            Play play = findByPerformancePlayId(plays, perf);
             int thisAmount;
 
             thisAmount = getAmounts(perf, play);
@@ -31,6 +31,10 @@ public class StatementPrinter {
         result += String.format("Amount owed is %s\n", frmt.format(totalAmount / 100));
         result += String.format("You earned %s credits\n", volumeCredits);
         return result;
+    }
+
+    private Play findByPerformancePlayId(Map<String, Play> plays, Performance perf) {
+        return plays.get(perf.playID());
     }
 
     private int getAmounts(Performance perf, Play play) {
