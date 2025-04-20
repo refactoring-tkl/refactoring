@@ -17,16 +17,16 @@ public class StatementPrinter {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
                 findByPerformancePlayId(plays, perf).name(),
-                formatAsUSD().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
+                usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
-        result += String.format("Amount owed is %s\n", formatAsUSD().format(totalAmount / 100));
+        result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
         result += String.format("You earned %s credits\n", volumeCredits);
         return result;
     }
 
-    private NumberFormat formatAsUSD() {
+    private NumberFormat usd() {
         return NumberFormat.getCurrencyInstance(Locale.US);
     }
 
