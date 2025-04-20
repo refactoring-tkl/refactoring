@@ -18,13 +18,18 @@ public class StatementPrinter {
                 perf.audience());
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
+        int volumeCredits = getVolumeCredits(invoice, plays);
+        result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
+        result += String.format("You earned %s credits\n", volumeCredits);
+        return result;
+    }
+
+    private int getVolumeCredits(Invoice invoice, Map<String, Play> plays) {
         int volumeCredits = 0;
         for (Performance perf : invoice.performances()) {
             volumeCredits += getVolumeCredits(plays, perf);
         }
-        result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
-        result += String.format("You earned %s credits\n", volumeCredits);
-        return result;
+        return volumeCredits;
     }
 
     private NumberFormat usd() {
