@@ -14,10 +14,7 @@ public class StatementPrinter {
         NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
         for (Performance perf : invoice.performances()) {
-            // add volume credits
-            volumeCredits += Math.max(perf.audience() - 30, 0);
-            // add extra credit for every ten comedy attendees
-            if ("comedy".equals(findByPerformancePlayId(plays, perf).type())) volumeCredits += perf.audience() / 5;
+            volumeCredits += getVolumeCredits(plays, perf);
 
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
@@ -29,6 +26,14 @@ public class StatementPrinter {
         result += String.format("Amount owed is %s\n", frmt.format(totalAmount / 100));
         result += String.format("You earned %s credits\n", volumeCredits);
         return result;
+    }
+
+    private int getVolumeCredits(Map<String, Play> plays, Performance perf) {
+        // add volume credits
+        int volumeCredits = Math.max(perf.audience() - 30, 0);
+        // add extra credit for every ten comedy attendees
+        if ("comedy".equals(findByPerformancePlayId(plays, perf).type())) volumeCredits += perf.audience() / 5;
+        return volumeCredits;
     }
 
     private Play findByPerformancePlayId(Map<String, Play> plays, Performance perf) {
