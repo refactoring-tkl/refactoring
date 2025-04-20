@@ -18,9 +18,8 @@ public class StatementPrinter {
                 perf.audience());
             totalAmount += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
-        int volumeCredits = getVolumeCredits(invoice, plays);
         result += String.format("Amount owed is %s\n", usd().format(totalAmount / 100));
-        result += String.format("You earned %s credits\n", volumeCredits);
+        result += String.format("You earned %s credits\n", getVolumeCredits(invoice, plays));
         return result;
     }
 
