@@ -2,7 +2,6 @@ package com.tkl.refactoring.chapter1;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -29,12 +28,7 @@ public class StatementPrinterV1 {
         protected Play play;
 
         protected abstract int amount();
-        private int volumeCredits() {
-            int result = 0;
-            result += Math.max(performance.audience() - 30, 0);
-            if ("comedy".equals(play.type())) result += performance.audience() / 5;
-            return result;
-        }
+        protected abstract int volumeCredits();
     }
 
     static class TragedyCalculator extends PerformanceCalculator{
@@ -49,6 +43,13 @@ public class StatementPrinterV1 {
             }
             return result;
         }
+
+        @Override
+        protected int volumeCredits() {
+            int result = 0;
+            result += Math.max(performance.audience() - 30, 0);
+            return result;
+        }
     }
     static class ComedyCalculator extends PerformanceCalculator{
         public ComedyCalculator(Performance performance, Play play) {
@@ -61,6 +62,14 @@ public class StatementPrinterV1 {
                 result += 10000 + 500 * (performance.audience() - 20);
             }
             result += 300 * performance.audience();
+            return result;
+        }
+
+        @Override
+        public int volumeCredits() {
+            int result = 0;
+            result += Math.max(performance.audience() - 30, 0);
+            result += performance.audience() / 5;
             return result;
         }
     }
