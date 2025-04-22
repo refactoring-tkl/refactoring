@@ -10,37 +10,57 @@ import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinterV1 {
-    @Getter
-    @AllArgsConstructor
-    static class PerformanceCalculator {
-        private Performance performance;
-        private Play play;
-
-        private int amount() {
-            int result;
+    static class PerformanceCalculatorFactory {
+        public PerformanceCalculator createPerformanceCalculator(Performance performance, Play play) {
             switch (play.type()) {
                 case "tragedy":
-                    result = 40000;
-                    if (performance.audience() > 30) {
-                        result += 1000 * (performance.audience() - 30);
-                    }
-                    break;
+                    return new TragedyCalculator(performance, play);
                 case "comedy":
-                    result = 30000;
-                    if (performance.audience() > 20) {
-                        result += 10000 + 500 * (performance.audience() - 20);
-                    }
-                    result += 300 * performance.audience();
-                    break;
+                    return new ComedyCalculator(performance, play);
                 default:
                     throw new Error("unknown type: ${playFor(performance).type()}");
             }
-            return result;
         }
+    }
+    @Getter
+    @AllArgsConstructor
+    static abstract class PerformanceCalculator {
+        protected Performance performance;
+        protected Play play;
+
+        protected abstract int amount();
         private int volumeCredits() {
             int result = 0;
             result += Math.max(performance.audience() - 30, 0);
             if ("comedy".equals(play.type())) result += performance.audience() / 5;
+            return result;
+        }
+    }
+
+    static class TragedyCalculator extends PerformanceCalculator{
+        public TragedyCalculator(Performance performance, Play play) {
+            super(performance, play);
+        }
+        @Override
+        public int amount() {
+            int result = 40000;
+            if (performance.audience() > 30) {
+                result += 1000 * (performance.audience() - 30);
+            }
+            return result;
+        }
+    }
+    static class ComedyCalculator extends PerformanceCalculator{
+        public ComedyCalculator(Performance performance, Play play) {
+            super(performance, play);
+        }
+        @Override
+        public int amount() {
+            int result = 30000;
+            if (performance.audience() > 20) {
+                result += 10000 + 500 * (performance.audience() - 20);
+            }
+            result += 300 * performance.audience();
             return result;
         }
     }
@@ -61,10 +81,11 @@ public class StatementPrinterV1 {
             return plays.get(performance.playID());
         }
         private int amountFor(Performance performance) {
-            return new PerformanceCalculator(performance, playFor(performance)).amount();
+            return new PerformanceCalculatorFactory().createPerformanceCalculator(performance, playFor(performance)).amount();
         }
         private int volumeCreditsFor(Performance performance) {
-            return new PerformanceCalculator(performance, playFor(performance)).volumeCredits();
+            return new PerformanceCalculatorFactory().createPerformanceCalculator(performance, playFor(performance)).volumeCredits();
+//            return new PerformanceCalculator(performance, playFor(performance)).volumeCredits();
         }
         private int totalAmount(StatementData statementData) {
             return statementData.performances.stream()
