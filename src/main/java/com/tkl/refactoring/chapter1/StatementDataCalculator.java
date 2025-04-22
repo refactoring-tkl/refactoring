@@ -25,7 +25,12 @@ public class StatementDataCalculator {
     }
 
     private PerformanceCalculator createPerformanceCalculator(Performance perf, Play play) {
-        return new PerformanceCalculator(perf, play);
+        switch(play.type()) {
+            case "tragedy": return new TragedyCalculator(perf, play);
+            case "comedy": return new ComedyCalculator(perf, play);
+            default:
+                throw new IllegalArgumentException("Unknown type of play");
+        }
     }
 
     private int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {
