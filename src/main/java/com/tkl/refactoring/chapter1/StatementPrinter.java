@@ -1,40 +1,41 @@
 package com.tkl.refactoring.chapter1;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
-        StatementData statementData = new StatementData(invoice.customer());
-        return renderPlainText(statementData, invoice, plays);
+        StatementData statementData = new StatementData(invoice.customer(), invoice.performances());
+        return renderPlainText(statementData, plays);
     }
 
-    private String renderPlainText(StatementData data, Invoice invoice, Map<String, Play> plays) {
+    private String renderPlainText(StatementData data, Map<String, Play> plays) {
         String result = String.format("Statement for %s\n", data.customer());
-        for (Performance perf : invoice.performances()) {
+        for (Performance perf : data.performances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
                 findByPerformancePlayId(plays, perf).name(),
                 usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
                 perf.audience());
         }
-        result += String.format("Amount owed is %s\n", usd().format(getAmounts(invoice, plays) / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(invoice, plays));
+        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.performances(), plays) / 100));
+        result += String.format("You earned %s credits\n", getVolumeCredits(data.performances(), plays));
         return result;
     }
 
-    private int getAmounts(Invoice invoice, Map<String, Play> plays) {
+    private int getAmounts(List<Performance> performances, Map<String, Play> plays) {
         int amounts = 0;
-        for (Performance perf : invoice.performances()) {
+        for (Performance perf : performances) {
             amounts += getAmounts(perf, findByPerformancePlayId(plays, perf));
         }
         return amounts;
     }
 
-    private int getVolumeCredits(Invoice invoice, Map<String, Play> plays) {
+    private int getVolumeCredits(List<Performance> performances, Map<String, Play> plays) {
         int volumeCredits = 0;
-        for (Performance perf : invoice.performances()) {
+        for (Performance perf : performances) {
             volumeCredits += getVolumeCredits(plays, perf);
         }
         return volumeCredits;

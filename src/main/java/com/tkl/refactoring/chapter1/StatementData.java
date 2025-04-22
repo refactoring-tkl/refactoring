@@ -1,4 +1,6 @@
 package com.tkl.refactoring.chapter1;
 
-public record StatementData(String customer) {
+import java.util.List;
+
+public record StatementData(String customer, List<Performance> performances) {
 }
