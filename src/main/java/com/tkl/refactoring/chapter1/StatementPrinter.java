@@ -8,8 +8,10 @@ import java.util.Map;
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
         StatementData statementData = new StatementData(invoice.customer(),
-                                                        enrichPerformances(invoice.performances(), plays));
-        return renderPlainText(statementData, plays);
+                                                        enrichPerformances(invoice.performances(), plays),
+                                                        getTotalAmounts(enrichPerformances(invoice.performances(), plays)),
+                                                        getTotalVolumeCredits(enrichPerformances(invoice.performances(), plays)));
+        return renderPlainText(statementData);
     }
 
     private List<EnrichedPerformance> enrichPerformances(List<Performance> performances, Map<String, Play> plays) {
@@ -21,17 +23,17 @@ public class StatementPrinter {
                             .toList();
     }
 
-    private String renderPlainText(StatementData data, Map<String, Play> plays) {
+    private String renderPlainText(StatementData data) {
         String result = String.format("Statement for %s\n", data.customer());
         for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
-                enrichedPerf.play().name(),
-                usd().format(enrichedPerf.amount() / 100),
-                enrichedPerf.performance().audience());
+                                        enrichedPerf.play().name(),
+                                        usd().format(enrichedPerf.amount() / 100),
+                                        enrichedPerf.performance().audience());
         }
-        result += String.format("Amount owed is %s\n", usd().format(getTotalAmounts(data.enrichedPerformances()) / 100));
-        result += String.format("You earned %s credits\n", getTotalVolumeCredits(data.enrichedPerformances()));
+        result += String.format("Amount owed is %s\n", usd().format(data.totalAmounts() / 100));
+        result += String.format("You earned %s credits\n", data.totalVolumeCredits());
         return result;
     }
 
@@ -88,5 +90,4 @@ public class StatementPrinter {
         }
         return amounts;
     }
-
 }
