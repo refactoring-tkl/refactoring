@@ -1,27 +1,41 @@
 package com.tkl.refactoring.chapter1;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinterV1 {
 
-    class StatementData { }
+    @Getter
+    static class StatementData {
+        private String customer;
+        private List<Performance> performances;
 
-    public String print(Invoice invoice, Map<String, Play> plays) {
-        StatementData statementData = new StatementPrinterV1().new StatementData();
-        return renderPlainText(statementData ,invoice, plays);
+        public StatementData(Invoice invoice) {
+            this.customer = invoice.customer();
+            this.performances = invoice.performances();
+        }
+
     }
 
-    private String renderPlainText(StatementData statementData, Invoice invoice, Map<String, Play> plays) {
-        String result = String.format("Statement for %s\n", invoice.customer());
+    public String print(Invoice invoice, Map<String, Play> plays) {
+        StatementData statementData = new StatementPrinterV1.StatementData(invoice);
+        return renderPlainText(statementData, plays);
+    }
 
-        for (Performance performance : invoice.performances()) {
+    private String renderPlainText(StatementData statementData, Map<String, Play> plays) {
+        String result = String.format("Statement for %s\n", statementData.getCustomer());
+
+        for (Performance performance : statementData.getPerformances()) {
             result += String.format("  %s: %s (%s seats)\n", playFor(performance, plays).name(), usd(amountFor(performance, plays)), performance.audience());
         }
 
-        result += String.format("Amount owed is %s\n", usd(totalAmount(invoice, plays)));
-        result += String.format("You earned %s credits\n", totalVolumeCredits(invoice, plays));
+        result += String.format("Amount owed is %s\n", usd(totalAmount(statementData, plays)));
+        result += String.format("You earned %s credits\n", totalVolumeCredits(statementData, plays));
         return result;
     }
 
@@ -29,17 +43,17 @@ public class StatementPrinterV1 {
         return NumberFormat.getCurrencyInstance(Locale.US).format(amount / 100);
     }
 
-    private int totalAmount(Invoice invoice, Map<String, Play> plays) {
+    private int totalAmount(StatementData statementData, Map<String, Play> plays) {
         int result = 0;
-        for (Performance performance : invoice.performances()) {
+        for (Performance performance : statementData.getPerformances()) {
             result += amountFor(performance, plays);
         }
         return result;
     }
 
-    private int totalVolumeCredits(Invoice invoice, Map<String, Play> plays) {
+    private int totalVolumeCredits(StatementData statementData, Map<String, Play> plays) {
         int result = 0;
-        for (Performance performance : invoice.performances()) {
+        for (Performance performance : statementData.getPerformances()) {
             result += volumeCreditsFor(performance, plays);
         }
         return result;
