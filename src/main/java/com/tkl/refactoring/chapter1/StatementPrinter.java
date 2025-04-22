@@ -15,7 +15,8 @@ public class StatementPrinter {
     private List<EnrichedPerformance> enrichPerformances(List<Performance> performances, Map<String, Play> plays) {
         return performances.stream()
                             .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience()),
-                                                                findByPerformancePlayId(plays, p)))
+                                                                findByPerformancePlayId(plays, p),
+                                                                getAmounts(p, findByPerformancePlayId(plays, p))))
                             .toList();
     }
 
@@ -25,23 +26,23 @@ public class StatementPrinter {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
                 enrichedPerf.play().name(),
-                usd().format(getAmounts(enrichedPerf.performance(), enrichedPerf.play()) / 100),
+                usd().format(enrichedPerf.amount() / 100),
                 enrichedPerf.performance().audience());
         }
-        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.enrichedPerformances(), plays) / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(data.enrichedPerformances(), plays));
+        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.enrichedPerformances()) / 100));
+        result += String.format("You earned %s credits\n", getVolumeCredits(data.enrichedPerformances()));
         return result;
     }
 
-    private int getAmounts(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
+    private int getAmounts(List<EnrichedPerformance> enrichedPerformances) {
         int amounts = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            amounts += getAmounts(enrichedPerf.performance(), enrichedPerf.play());
+            amounts += enrichedPerf.amount();
         }
         return amounts;
     }
 
-    private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
+    private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
         int volumeCredits = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
             volumeCredits += getVolumeCredits(enrichedPerf);
