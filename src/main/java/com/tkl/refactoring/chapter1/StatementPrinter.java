@@ -7,36 +7,44 @@ import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
-        StatementData statementData = new StatementData(invoice.customer(), invoice.performances());
+        StatementData statementData = new StatementData(invoice.customer(),
+                                                        enrichPerformances(invoice.performances()));
         return renderPlainText(statementData, plays);
+    }
+
+    private List<EnrichedPerformance> enrichPerformances(List<Performance> performances) {
+        return performances.stream()
+                            .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience())))
+                            .toList();
     }
 
     private String renderPlainText(StatementData data, Map<String, Play> plays) {
         String result = String.format("Statement for %s\n", data.customer());
-        for (Performance perf : data.performances()) {
+        for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
-                findByPerformancePlayId(plays, perf).name(),
-                usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
-                perf.audience());
+                findByPerformancePlayId(plays, enrichedPerf.performance()).name(),
+                usd().format(getAmounts(enrichedPerf.performance(),
+                            findByPerformancePlayId(plays, enrichedPerf.performance())) / 100),
+                enrichedPerf.performance().audience());
         }
-        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.performances(), plays) / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(data.performances(), plays));
+        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.enrichedPerformances(), plays) / 100));
+        result += String.format("You earned %s credits\n", getVolumeCredits(data.enrichedPerformances(), plays));
         return result;
     }
 
-    private int getAmounts(List<Performance> performances, Map<String, Play> plays) {
+    private int getAmounts(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
         int amounts = 0;
-        for (Performance perf : performances) {
-            amounts += getAmounts(perf, findByPerformancePlayId(plays, perf));
+        for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
+            amounts += getAmounts(enrichedPerf.performance(), findByPerformancePlayId(plays, enrichedPerf.performance()));
         }
         return amounts;
     }
 
-    private int getVolumeCredits(List<Performance> performances, Map<String, Play> plays) {
+    private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
         int volumeCredits = 0;
-        for (Performance perf : performances) {
-            volumeCredits += getVolumeCredits(plays, perf);
+        for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
+            volumeCredits += getVolumeCredits(plays, enrichedPerf.performance());
         }
         return volumeCredits;
     }
