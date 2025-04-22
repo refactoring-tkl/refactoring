@@ -30,12 +30,12 @@ public class StatementPrinter {
                 usd().format(enrichedPerf.amount() / 100),
                 enrichedPerf.performance().audience());
         }
-        result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.enrichedPerformances()) / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(data.enrichedPerformances()));
+        result += String.format("Amount owed is %s\n", usd().format(getTotalAmounts(data.enrichedPerformances()) / 100));
+        result += String.format("You earned %s credits\n", getTotalVolumeCredits(data.enrichedPerformances()));
         return result;
     }
 
-    private int getAmounts(List<EnrichedPerformance> enrichedPerformances) {
+    private int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {
         int amounts = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
             amounts += enrichedPerf.amount();
@@ -43,7 +43,7 @@ public class StatementPrinter {
         return amounts;
     }
 
-    private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
+    private int getTotalVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
         int volumeCredits = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
             volumeCredits += enrichedPerf.volumeCredits();
