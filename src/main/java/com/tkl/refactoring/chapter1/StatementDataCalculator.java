@@ -16,7 +16,7 @@ public class StatementDataCalculator {
                             .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience()),
                                                                 findByPerformancePlayId(plays, p),
                                                                 getAmounts(p, findByPerformancePlayId(plays, p)),
-                                                                getVolumeCredits(findByPerformancePlayId(plays, p), p)))
+                                                                getVolumeCredits(p, findByPerformancePlayId(plays, p))))
                             .toList();
     }
 
@@ -33,12 +33,8 @@ public class StatementDataCalculator {
                                     .sum();
     }
 
-    private int getVolumeCredits(Play play, Performance performance) {
-        // add volume credits
-        int volumeCredits = Math.max(performance.audience() - 30, 0);
-        // add extra credit for every ten comedy attendees
-        if ("comedy".equals(play.type())) volumeCredits += performance.audience() / 5;
-        return volumeCredits;
+    private int getVolumeCredits(Performance perf, Play play) {
+        return new PerformanceCalculator(perf, play).getVolumeCredits();
     }
 
     private Play findByPerformancePlayId(Map<String, Play> plays, Performance perf) {
