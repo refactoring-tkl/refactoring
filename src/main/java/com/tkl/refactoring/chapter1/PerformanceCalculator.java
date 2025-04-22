@@ -30,4 +30,12 @@ public class PerformanceCalculator {
         }
         return amounts;
     }
+
+    public int getVolumeCredits() {
+        // add volume credits
+        int volumeCredits = Math.max(this.performance.audience() - 30, 0);
+        // add extra credit for every ten comedy attendees
+        if ("comedy".equals(this.play.type())) volumeCredits += this.performance.audience() / 5;
+        return volumeCredits;
+    }
 }
