@@ -47,11 +47,9 @@ public class StatementPrinterV1 {
             return result;
         }
         private int totalAmount(StatementData statementData) {
-            int result = 0;
-            for (Performance performance : statementData.getPerformances()) {
-                result += amountFor(performance);
-            }
-            return result;
+            return statementData.performances.stream()
+                    .mapToInt(this::amountFor)
+                    .sum();
         }
         private int volumeCreditsFor(Performance performance) {
             int result = 0;
@@ -62,11 +60,9 @@ public class StatementPrinterV1 {
             return result;
         }
         private int totalVolumeCredits(StatementData statementData) {
-            int result = 0;
-            for (Performance performance : statementData.getPerformances()) {
-                result += volumeCreditsFor(performance);
-            }
-            return result;
+            return statementData.getPerformances().stream()
+                    .mapToInt(this::volumeCreditsFor)
+                    .sum();
         }
     }
 
