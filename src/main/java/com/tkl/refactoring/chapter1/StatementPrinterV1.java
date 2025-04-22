@@ -53,9 +53,7 @@ public class StatementPrinterV1 {
         }
         private int volumeCreditsFor(Performance performance) {
             int result = 0;
-            // add volume credits
             result += Math.max(performance.audience() - 30, 0);
-            // add extra credit for every ten comedy attendees
             if ("comedy".equals(playFor(performance).type())) result += performance.audience() / 5;
             return result;
         }
@@ -88,6 +86,21 @@ public class StatementPrinterV1 {
 
     private String usd(int amount) {
         return NumberFormat.getCurrencyInstance(Locale.US).format(amount / 100);
+    }
+
+    private String renderHtml(StatementData statementData) {
+        String result = String.format("<h1>Statement for %s\n<h1>", statementData.getCustomer());
+        result += "<table>\n";
+        result += "<tr><th>연극</th><th><좌석 수></th><th>금액</th></tr>";
+
+        for (Performance performance : statementData.getPerformances()) {
+            result += String.format("  <tr><td>%s: </td><td>%s </td> <td>(%s seats)</td></tr>\n", statementData.playFor(performance).name(), usd(statementData.amountFor(performance)), performance.audience());
+        }
+        result += "</table>\n";
+
+        result += String.format("<p>Amount owed is <em> %s </em></p>\n", usd(statementData.totalAmount(statementData)));
+        result += String.format("<p>You earned <em> %s </em> credits </p>\n", statementData.totalVolumeCredits(statementData));
+        return result;
     }
 
 }
