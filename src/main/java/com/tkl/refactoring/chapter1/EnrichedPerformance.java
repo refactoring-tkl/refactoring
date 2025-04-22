@@ -1,4 +1,4 @@
 package com.tkl.refactoring.chapter1;
 
-public record EnrichedPerformance(Performance performance) {
+public record EnrichedPerformance(Performance performance, Play play) {
 }

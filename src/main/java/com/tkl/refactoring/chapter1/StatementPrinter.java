@@ -8,13 +8,14 @@ import java.util.Map;
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
         StatementData statementData = new StatementData(invoice.customer(),
-                                                        enrichPerformances(invoice.performances()));
+                                                        enrichPerformances(invoice.performances(), plays));
         return renderPlainText(statementData, plays);
     }
 
-    private List<EnrichedPerformance> enrichPerformances(List<Performance> performances) {
+    private List<EnrichedPerformance> enrichPerformances(List<Performance> performances, Map<String, Play> plays) {
         return performances.stream()
-                            .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience())))
+                            .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience()),
+                                                                findByPerformancePlayId(plays, p)))
                             .toList();
     }
 
@@ -23,9 +24,8 @@ public class StatementPrinter {
         for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
-                findByPerformancePlayId(plays, enrichedPerf.performance()).name(),
-                usd().format(getAmounts(enrichedPerf.performance(),
-                            findByPerformancePlayId(plays, enrichedPerf.performance())) / 100),
+                enrichedPerf.play().name(),
+                usd().format(getAmounts(enrichedPerf.performance(), enrichedPerf.play()) / 100),
                 enrichedPerf.performance().audience());
         }
         result += String.format("Amount owed is %s\n", usd().format(getAmounts(data.enrichedPerformances(), plays) / 100));
@@ -36,7 +36,7 @@ public class StatementPrinter {
     private int getAmounts(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
         int amounts = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            amounts += getAmounts(enrichedPerf.performance(), findByPerformancePlayId(plays, enrichedPerf.performance()));
+            amounts += getAmounts(enrichedPerf.performance(), enrichedPerf.play());
         }
         return amounts;
     }
@@ -44,7 +44,7 @@ public class StatementPrinter {
     private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances, Map<String, Play> plays) {
         int volumeCredits = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            volumeCredits += getVolumeCredits(plays, enrichedPerf.performance());
+            volumeCredits += getVolumeCredits(enrichedPerf);
         }
         return volumeCredits;
     }
@@ -53,11 +53,11 @@ public class StatementPrinter {
         return NumberFormat.getCurrencyInstance(Locale.US);
     }
 
-    private int getVolumeCredits(Map<String, Play> plays, Performance perf) {
+    private int getVolumeCredits(EnrichedPerformance enrichedPerf) {
         // add volume credits
-        int volumeCredits = Math.max(perf.audience() - 30, 0);
+        int volumeCredits = Math.max(enrichedPerf.performance().audience() - 30, 0);
         // add extra credit for every ten comedy attendees
-        if ("comedy".equals(findByPerformancePlayId(plays, perf).type())) volumeCredits += perf.audience() / 5;
+        if ("comedy".equals(enrichedPerf.play().type())) volumeCredits += enrichedPerf.performance().audience() / 5;
         return volumeCredits;
     }
 
