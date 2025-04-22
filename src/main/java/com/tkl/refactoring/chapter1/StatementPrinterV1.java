@@ -9,6 +9,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinterV1 {
+    static class PerformanceCalculator {
+        private Performance performance;
+        private Play play;
+    }
 
     @Getter
     static class StatementData {
