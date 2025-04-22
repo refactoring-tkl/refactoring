@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
-        StatementData statementData = new StatementData();
+        StatementData statementData = new StatementData(invoice.customer());
         return renderPlainText(statementData, invoice, plays);
     }
 
     private String renderPlainText(StatementData data, Invoice invoice, Map<String, Play> plays) {
-        String result = String.format("Statement for %s\n", invoice.customer());
+        String result = String.format("Statement for %s\n", data.customer());
         for (Performance perf : invoice.performances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
