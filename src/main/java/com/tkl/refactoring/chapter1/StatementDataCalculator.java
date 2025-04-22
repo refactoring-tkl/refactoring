@@ -46,24 +46,6 @@ public class StatementDataCalculator {
     }
 
     private int getAmounts(Performance perf, Play play) {
-        int amounts = 0;
-        switch (play.type()) {
-            case "tragedy":
-                amounts = 40000;
-                if (perf.audience() > 30) {
-                    amounts += 1000 * (perf.audience() - 30);
-                }
-                break;
-            case "comedy":
-                amounts = 30000;
-                if (perf.audience() > 20) {
-                    amounts += 10000 + 500 * (perf.audience() - 20);
-                }
-                amounts += 300 * perf.audience();
-                break;
-            default:
-                throw new Error("unknown type: ${play.type}");
-        }
-        return amounts;
+        return new PerformanceCalculator(perf, play).getAmounts();
     }
 }
