@@ -46,11 +46,9 @@ public class StatementPrinter {
     }
 
     private int getTotalVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
-        int volumeCredits = 0;
-        for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            volumeCredits += enrichedPerf.volumeCredits();
-        }
-        return volumeCredits;
+        return enrichedPerformances.stream()
+                                    .mapToInt(EnrichedPerformance::volumeCredits)
+                                    .sum();
     }
 
     private NumberFormat usd() {
