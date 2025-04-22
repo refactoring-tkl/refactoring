@@ -68,10 +68,10 @@ public class StatementPrinterV1 {
 
     public String print(Invoice invoice, Map<String, Play> plays) {
         StatementData statementData = new StatementPrinterV1.StatementData(invoice, plays);
-        return renderPlainText(statementData, plays);
+        return renderPlainText(statementData);
     }
 
-    private String renderPlainText(StatementData statementData, Map<String, Play> plays) {
+    private String renderPlainText(StatementData statementData) {
         String result = String.format("Statement for %s\n", statementData.getCustomer());
 
         for (Performance performance : statementData.getPerformances()) {
