@@ -1,6 +1,5 @@
 package com.tkl.refactoring.chapter1;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +24,11 @@ public class StatementDataCalculator {
     }
 
     private PerformanceCalculator createPerformanceCalculator(Performance perf, Play play) {
-        switch(play.type()) {
-            case "tragedy": return new TragedyCalculator(perf, play);
-            case "comedy": return new ComedyCalculator(perf, play);
-            default:
-                throw new IllegalArgumentException("Unknown type of play");
-        }
+        return switch (play.type()) {
+            case "tragedy" -> new TragedyCalculator(perf, play);
+            case "comedy" -> new ComedyCalculator(perf, play);
+            default -> throw new IllegalArgumentException("Unknown type of play");
+        };
     }
 
     private int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {

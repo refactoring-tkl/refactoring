@@ -10,7 +10,7 @@ public class TragedyCalculator extends PerformanceCalculator {
         int amounts = 40000;
         if (this.performance.audience() > 30) {
             amounts += 1000 * (this.performance.audience() - 30);
-        };
+        }
         return amounts;
     }
 }
