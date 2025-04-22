@@ -58,25 +58,7 @@ public class StatementPrinterV1 {
             return plays.get(performance.playID());
         }
         private int amountFor(Performance performance) {
-            int result;
-            switch (playFor(performance).type()) {
-                case "tragedy":
-                    result = 40000;
-                    if (performance.audience() > 30) {
-                        result += 1000 * (performance.audience() - 30);
-                    }
-                    break;
-                case "comedy":
-                    result = 30000;
-                    if (performance.audience() > 20) {
-                        result += 10000 + 500 * (performance.audience() - 20);
-                    }
-                    result += 300 * performance.audience();
-                    break;
-                default:
-                    throw new Error("unknown type: ${playFor(performance).type()}");
-            }
-            return result;
+            return new PerformanceCalculator(performance, playFor(performance)).amount();
         }
         private int totalAmount(StatementData statementData) {
             return statementData.performances.stream()
