@@ -38,11 +38,9 @@ public class StatementPrinter {
     }
 
     private int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {
-        int amounts = 0;
-        for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            amounts += enrichedPerf.amount();
-        }
-        return amounts;
+        return enrichedPerformances.stream()
+                                    .mapToInt(EnrichedPerformance::amount)
+                                    .sum();
     }
 
     private int getTotalVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
