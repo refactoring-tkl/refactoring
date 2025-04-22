@@ -1,5 +1,6 @@
 package com.tkl.refactoring.chapter1;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,14 +11,10 @@ import java.util.Map;
 
 public class StatementPrinterV1 {
     @Getter
+    @AllArgsConstructor
     static class PerformanceCalculator {
         private Performance performance;
         private Play play;
-
-        public PerformanceCalculator(Performance performance, Play play) {
-            this.performance = performance;
-            this.play = play;
-        }
 
         private int amount() {
             int result;
@@ -40,6 +37,12 @@ public class StatementPrinterV1 {
             }
             return result;
         }
+        private int volumeCredits() {
+            int result = 0;
+            result += Math.max(performance.audience() - 30, 0);
+            if ("comedy".equals(play.type())) result += performance.audience() / 5;
+            return result;
+        }
     }
 
     @Getter
@@ -60,16 +63,13 @@ public class StatementPrinterV1 {
         private int amountFor(Performance performance) {
             return new PerformanceCalculator(performance, playFor(performance)).amount();
         }
+        private int volumeCreditsFor(Performance performance) {
+            return new PerformanceCalculator(performance, playFor(performance)).volumeCredits();
+        }
         private int totalAmount(StatementData statementData) {
             return statementData.performances.stream()
                     .mapToInt(this::amountFor)
                     .sum();
-        }
-        private int volumeCreditsFor(Performance performance) {
-            int result = 0;
-            result += Math.max(performance.audience() - 30, 0);
-            if ("comedy".equals(playFor(performance).type())) result += performance.audience() / 5;
-            return result;
         }
         private int totalVolumeCredits(StatementData statementData) {
             return statementData.getPerformances().stream()
