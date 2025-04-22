@@ -6,10 +6,11 @@ import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
-        return renderPlainText(invoice, plays);
+        StatementData statementData = new StatementData();
+        return renderPlainText(statementData, invoice, plays);
     }
 
-    private String renderPlainText(Invoice invoice, Map<String, Play> plays) {
+    private String renderPlainText(StatementData data, Invoice invoice, Map<String, Play> plays) {
         String result = String.format("Statement for %s\n", invoice.customer());
         for (Performance perf : invoice.performances()) {
             // print line for this order
