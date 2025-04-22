@@ -15,7 +15,7 @@ public class StatementDataCalculator {
     private List<EnrichedPerformance> enrichPerformances(List<Performance> performances, Map<String, Play> plays) {
         return performances.stream()
                 .map(p -> {
-                    PerformanceCalculator calculator = new PerformanceCalculator(p, findByPerformancePlayId(plays, p));
+                    PerformanceCalculator calculator = createPerformanceCalculator(p, findByPerformancePlayId(plays, p));
                     return new EnrichedPerformance(new Performance(p.playID(), p.audience()),
                             findByPerformancePlayId(plays, p),
                             calculator.getAmounts(),
@@ -24,6 +24,9 @@ public class StatementDataCalculator {
                 .toList();
     }
 
+    private PerformanceCalculator createPerformanceCalculator(Performance perf, Play play) {
+        return new PerformanceCalculator(perf, play);
+    }
 
     private int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {
         return enrichedPerformances.stream()
