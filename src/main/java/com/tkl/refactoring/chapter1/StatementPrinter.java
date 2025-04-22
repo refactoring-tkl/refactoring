@@ -16,7 +16,8 @@ public class StatementPrinter {
         return performances.stream()
                             .map(p -> new EnrichedPerformance(new Performance(p.playID(), p.audience()),
                                                                 findByPerformancePlayId(plays, p),
-                                                                getAmounts(p, findByPerformancePlayId(plays, p))))
+                                                                getAmounts(p, findByPerformancePlayId(plays, p)),
+                                                                getVolumeCredits(findByPerformancePlayId(plays, p), p)))
                             .toList();
     }
 
@@ -45,7 +46,7 @@ public class StatementPrinter {
     private int getVolumeCredits(List<EnrichedPerformance> enrichedPerformances) {
         int volumeCredits = 0;
         for (EnrichedPerformance enrichedPerf : enrichedPerformances) {
-            volumeCredits += getVolumeCredits(enrichedPerf);
+            volumeCredits += enrichedPerf.volumeCredits();
         }
         return volumeCredits;
     }
@@ -54,11 +55,11 @@ public class StatementPrinter {
         return NumberFormat.getCurrencyInstance(Locale.US);
     }
 
-    private int getVolumeCredits(EnrichedPerformance enrichedPerf) {
+    private int getVolumeCredits(Play play, Performance performance) {
         // add volume credits
-        int volumeCredits = Math.max(enrichedPerf.performance().audience() - 30, 0);
+        int volumeCredits = Math.max(performance.audience() - 30, 0);
         // add extra credit for every ten comedy attendees
-        if ("comedy".equals(enrichedPerf.play().type())) volumeCredits += enrichedPerf.performance().audience() / 5;
+        if ("comedy".equals(play.type())) volumeCredits += performance.audience() / 5;
         return volumeCredits;
     }
 
