@@ -67,8 +67,11 @@ public class StatementPrinterV1 {
     }
 
     public String print(Invoice invoice, Map<String, Play> plays) {
-        StatementData statementData = new StatementPrinterV1.StatementData(invoice, plays);
-        return renderPlainText(statementData);
+        return renderPlainText(createStatementData(invoice, plays));
+    }
+
+    private StatementData createStatementData(Invoice invoice, Map<String, Play> plays) {
+        return new StatementData(invoice, plays);
     }
 
     private String renderPlainText(StatementData statementData) {
