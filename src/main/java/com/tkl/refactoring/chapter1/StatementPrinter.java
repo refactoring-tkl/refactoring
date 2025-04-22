@@ -5,10 +5,12 @@ import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinter {
-
     public String print(Invoice invoice, Map<String, Play> plays) {
-        String result = String.format("Statement for %s\n", invoice.customer());
+        return renderPlainText(invoice, plays);
+    }
 
+    private String renderPlainText(Invoice invoice, Map<String, Play> plays) {
+        String result = String.format("Statement for %s\n", invoice.customer());
         for (Performance perf : invoice.performances()) {
             // print line for this order
             result += String.format("  %s: %s (%s seats)\n",
