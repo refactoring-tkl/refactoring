@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class StatementPrinter {
     public String print(Invoice invoice, Map<String, Play> plays) {
-        return renderPlainText(new StatementDataCalculator().createStatementData(invoice, plays));
+        return renderPlainText(StatementDataBuilder.createStatementData(invoice, plays));
     }
 
     private String renderPlainText(StatementData data) {
@@ -24,7 +24,7 @@ public class StatementPrinter {
     }
 
     public String printHtml(Invoice invoice, Map<String, Play> plays) {
-        return renderHtml(new StatementDataCalculator().createStatementData(invoice, plays));
+        return renderHtml(StatementDataBuilder.createStatementData(invoice, plays));
     }
 
     private String renderHtml(StatementData data) {
