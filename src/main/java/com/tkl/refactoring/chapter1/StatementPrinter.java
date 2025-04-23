@@ -15,17 +15,18 @@ public class StatementPrinter {
     }
 
     private String renderPlainText(StatementData data) {
-        String result = String.format("Statement for %s\n", data.customer());
+        StringBuilder plainTextBuilder = new StringBuilder();
+        plainTextBuilder.append(String.format("Statement for %s\n", data.customer()));
         for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
-            result += String.format("  %s: %s (%s seats)\n",
+            plainTextBuilder.append(String.format("  %s: %s (%s seats)\n",
                                         enrichedPerf.play().name(),
                                         usd().format(enrichedPerf.amount() / 100),
-                                        enrichedPerf.performance().audience());
+                                        enrichedPerf.performance().audience()));
         }
-        result += String.format("Amount owed is %s\n", usd().format(data.totalAmounts() / 100));
-        result += String.format("You earned %s credits\n", data.totalVolumeCredits());
-        return result;
+        plainTextBuilder.append(String.format("Amount owed is %s\n", usd().format(data.totalAmounts() / 100)))
+                        .append(String.format("You earned %s credits\n", data.totalVolumeCredits()));
+        return plainTextBuilder.toString();
     }
 
     public String printHtml(Invoice invoice, Map<String, Play> plays) {
@@ -33,20 +34,21 @@ public class StatementPrinter {
     }
 
     private String renderHtml(StatementData data) {
-        String result = String.format("<h1>Statement for:  %s<h1>\n", data.customer());
-        result += "<table>\n";
-        result += "<tr><th>Play</th><th>Seats</th><th>Amount</th></tr>";
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(String.format("<h1>Statement for:  %s<h1>\n", data.customer()))
+                    .append("<table>\n")
+                    .append("<tr><th>Play</th><th>Seats</th><th>Amount</th></tr>");
         for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
-            result += String.format("   <tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+            htmlBuilder.append(String.format("   <tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
                                         enrichedPerf.play().name(),
                                         usd().format(enrichedPerf.amount() / 100),
-                                        enrichedPerf.performance().audience());
+                                        enrichedPerf.performance().audience()));
         }
-        result += "</table>\n";
-        result += String.format("<p>Amount owed is <em>%s</em></p>\n", usd().format(data.totalAmounts() / 100));
-        result += String.format("<p>You earned <em>%s</em> credits<p>\n", data.totalVolumeCredits());
-        return result;
+        htmlBuilder.append("</table>\n")
+                .append(String.format("<p>Amount owed is <em>%s</em></p>\n", usd().format(data.totalAmounts() / 100)))
+                .append(String.format("<p>You earned <em>%s</em> credits<p>\n", data.totalVolumeCredits()));
+        return htmlBuilder.toString();
     }
 
     private NumberFormat usd() {
