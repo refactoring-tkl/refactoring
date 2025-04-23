@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public class StatementDataBuilder {
+    private StatementDataBuilder() {
+        throw new UnsupportedOperationException("This cannot be instantiated");
+    }
+
     public static StatementData createStatementData(Invoice invoice, Map<String, Play> plays) {
         return new StatementData(invoice.customer(),
                 enrichPerformances(invoice.performances(), plays),
