@@ -1,4 +1,7 @@
-package com.tkl.refactoring.chapter1;
+package com.tkl.refactoring.chapter1.calculator;
+
+import com.tkl.refactoring.chapter1.model.Performance;
+import com.tkl.refactoring.chapter1.model.Play;
 
 public class TragedyCalculator extends PerformanceCalculator {
     public TragedyCalculator(Performance performance, Play play) {

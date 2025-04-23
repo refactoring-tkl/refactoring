@@ -1,5 +1,10 @@
 package com.tkl.refactoring.chapter1;
 
+import com.tkl.refactoring.chapter1.calculator.ComedyCalculator;
+import com.tkl.refactoring.chapter1.calculator.PerformanceCalculator;
+import com.tkl.refactoring.chapter1.calculator.TragedyCalculator;
+import com.tkl.refactoring.chapter1.model.*;
+
 import java.util.List;
 import java.util.Map;
 

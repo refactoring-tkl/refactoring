@@ -1,4 +1,4 @@
-package com.tkl.refactoring.chapter1;
+package com.tkl.refactoring.chapter1.model;
 
 import java.util.List;
 

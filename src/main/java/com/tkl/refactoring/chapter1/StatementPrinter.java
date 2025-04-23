@@ -1,5 +1,10 @@
 package com.tkl.refactoring.chapter1;
 
+import com.tkl.refactoring.chapter1.model.EnrichedPerformance;
+import com.tkl.refactoring.chapter1.model.Invoice;
+import com.tkl.refactoring.chapter1.model.Play;
+import com.tkl.refactoring.chapter1.model.StatementData;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
