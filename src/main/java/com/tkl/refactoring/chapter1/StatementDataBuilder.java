@@ -2,6 +2,7 @@ package com.tkl.refactoring.chapter1;
 
 import com.tkl.refactoring.chapter1.calculator.ComedyCalculator;
 import com.tkl.refactoring.chapter1.calculator.PerformanceCalculator;
+import com.tkl.refactoring.chapter1.calculator.PerformanceCalculatorFactory;
 import com.tkl.refactoring.chapter1.calculator.TragedyCalculator;
 import com.tkl.refactoring.chapter1.model.*;
 
@@ -19,21 +20,13 @@ public class StatementDataBuilder {
     private static List<EnrichedPerformance> enrichPerformances(List<Performance> performances, Map<String, Play> plays) {
         return performances.stream()
                 .map(p -> {
-                    PerformanceCalculator calculator = createPerformanceCalculator(p, findByPerformancePlayId(plays, p));
+                    PerformanceCalculator calculator = PerformanceCalculatorFactory.createPerformanceCalculator(p, findByPerformancePlayId(plays, p));
                     return new EnrichedPerformance(new Performance(p.playID(), p.audience()),
                             findByPerformancePlayId(plays, p),
                             calculator.getAmounts(),
                             calculator.getVolumeCredits());
                 })
                 .toList();
-    }
-
-    private static PerformanceCalculator createPerformanceCalculator(Performance perf, Play play) {
-        return switch (play.type()) {
-            case "tragedy" -> new TragedyCalculator(perf, play);
-            case "comedy" -> new ComedyCalculator(perf, play);
-            default -> throw new IllegalArgumentException("Unknown type of play");
-        };
     }
 
     private static int getTotalAmounts(List<EnrichedPerformance> enrichedPerformances) {
