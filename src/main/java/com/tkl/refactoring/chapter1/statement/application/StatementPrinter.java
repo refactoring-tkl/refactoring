@@ -26,16 +26,17 @@ public class StatementPrinter {
 	}
 
 	private String renderPlainText(Statement statement) {
-		String result = String.format("Statement for %s\n", statement.customer());
+		StringBuilder result = new StringBuilder();
+		result.append(String.format("Statement for %s\n", statement.customer()));
 
 		for (StatementPerformance perf : statement.performances()) {
 			// print line for this order
-			result += String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(perf.amount()), perf.audience());
+			result.append(String.format("  %s: %s (%s seats)\n", perf.play().name(), usd(perf.amount()), perf.audience()));
 		}
 
-		result += String.format("Amount owed is %s\n", usd(statement.totalAmount()));
-		result += String.format("You earned %s credits\n", statement.totalVolumeCredits());
-		return result;
+		result.append(String.format("Amount owed is %s\n", usd(statement.totalAmount())));
+		result.append(String.format("You earned %s credits\n", statement.totalVolumeCredits()));
+		return result.toString();
 	}
 
 	private static String usd(int thisAmount) {
