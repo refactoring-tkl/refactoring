@@ -12,12 +12,14 @@ import java.util.Map;
 
 @Getter
 public class StatementData {
-    private Invoice invoice;
+    private String customer;
+    private List<Performance> performances;
     private Map<String, Play> plays;
     private PerformanceCalculatorFactory performanceCalculatorFactory;
 
     public StatementData(Invoice invoice, Map<String, Play> plays) {
-        this.invoice = invoice;
+        this.customer = invoice.customer();
+        this.performances = invoice.performances();
         this.plays = plays;
         this.performanceCalculatorFactory = new PerformanceCalculatorFactory();
     }
@@ -32,12 +34,12 @@ public class StatementData {
         return performanceCalculatorFactory.createPerformanceCalculator(performance, playFor(performance)).volumeCredits();
     }
     public int totalAmount(StatementData statementData) {
-        return statementData.invoice.performances().stream()
+        return statementData.getPerformances().stream()
                 .mapToInt(this::amountFor)
                 .sum();
     }
     public int totalVolumeCredits(StatementData statementData) {
-        return statementData.invoice.performances().stream()
+        return statementData.getPerformances().stream()
                 .mapToInt(this::volumeCreditsFor)
                 .sum();
     }
