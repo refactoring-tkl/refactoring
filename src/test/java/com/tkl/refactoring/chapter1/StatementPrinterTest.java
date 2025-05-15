@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.tkl.refactoring.chapter1.model.*;
 
 
 class StatementPrinterTest {

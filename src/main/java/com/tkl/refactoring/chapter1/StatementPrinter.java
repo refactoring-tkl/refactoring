@@ -1,78 +1,57 @@
 package com.tkl.refactoring.chapter1;
 
+import com.tkl.refactoring.chapter1.model.EnrichedPerformance;
+import com.tkl.refactoring.chapter1.model.Invoice;
+import com.tkl.refactoring.chapter1.model.Play;
+import com.tkl.refactoring.chapter1.model.StatementData;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
 
 public class StatementPrinter {
-
     public String print(Invoice invoice, Map<String, Play> plays) {
-        String result = String.format("Statement for %s\n", invoice.customer());
+        return renderPlainText(StatementDataBuilder.createStatementData(invoice, plays));
+    }
 
-        for (Performance perf : invoice.performances()) {
+    private String renderPlainText(StatementData data) {
+        StringBuilder plainTextBuilder = new StringBuilder();
+        plainTextBuilder.append(String.format("Statement for %s\n", data.customer()));
+        for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
             // print line for this order
-            result += String.format("  %s: %s (%s seats)\n",
-                findByPerformancePlayId(plays, perf).name(),
-                usd().format(getAmounts(perf, findByPerformancePlayId(plays, perf)) / 100),
-                perf.audience());
+            plainTextBuilder.append(String.format("  %s: %s (%s seats)\n",
+                                        enrichedPerf.play().name(),
+                                        usd().format(enrichedPerf.amount() / 100),
+                                        enrichedPerf.performance().audience()));
         }
-        result += String.format("Amount owed is %s\n", usd().format(getAmounts(invoice, plays) / 100));
-        result += String.format("You earned %s credits\n", getVolumeCredits(invoice, plays));
-        return result;
+        plainTextBuilder.append(String.format("Amount owed is %s\n", usd().format(data.totalAmounts() / 100)))
+                        .append(String.format("You earned %s credits\n", data.totalVolumeCredits()));
+        return plainTextBuilder.toString();
     }
 
-    private int getAmounts(Invoice invoice, Map<String, Play> plays) {
-        int amounts = 0;
-        for (Performance perf : invoice.performances()) {
-            amounts += getAmounts(perf, findByPerformancePlayId(plays, perf));
-        }
-        return amounts;
+    public String printHtml(Invoice invoice, Map<String, Play> plays) {
+        return renderHtml(StatementDataBuilder.createStatementData(invoice, plays));
     }
 
-    private int getVolumeCredits(Invoice invoice, Map<String, Play> plays) {
-        int volumeCredits = 0;
-        for (Performance perf : invoice.performances()) {
-            volumeCredits += getVolumeCredits(plays, perf);
+    private String renderHtml(StatementData data) {
+        StringBuilder htmlBuilder = new StringBuilder();
+        htmlBuilder.append(String.format("<h1>Statement for:  %s<h1>\n", data.customer()))
+                    .append("<table>\n")
+                    .append("<tr><th>Play</th><th>Seats</th><th>Amount</th></tr>");
+        for (EnrichedPerformance enrichedPerf : data.enrichedPerformances()) {
+            // print line for this order
+            htmlBuilder.append(String.format("   <tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
+                                        enrichedPerf.play().name(),
+                                        usd().format(enrichedPerf.amount() / 100),
+                                        enrichedPerf.performance().audience()));
         }
-        return volumeCredits;
+        htmlBuilder.append("</table>\n")
+                .append(String.format("<p>Amount owed is <em>%s</em></p>\n", usd().format(data.totalAmounts() / 100)))
+                .append(String.format("<p>You earned <em>%s</em> credits<p>\n", data.totalVolumeCredits()));
+        return htmlBuilder.toString();
     }
 
     private NumberFormat usd() {
         return NumberFormat.getCurrencyInstance(Locale.US);
     }
-
-    private int getVolumeCredits(Map<String, Play> plays, Performance perf) {
-        // add volume credits
-        int volumeCredits = Math.max(perf.audience() - 30, 0);
-        // add extra credit for every ten comedy attendees
-        if ("comedy".equals(findByPerformancePlayId(plays, perf).type())) volumeCredits += perf.audience() / 5;
-        return volumeCredits;
-    }
-
-    private Play findByPerformancePlayId(Map<String, Play> plays, Performance perf) {
-        return plays.get(perf.playID());
-    }
-
-    private int getAmounts(Performance perf, Play play) {
-        int amounts = 0;
-        switch (play.type()) {
-            case "tragedy":
-                amounts = 40000;
-                if (perf.audience() > 30) {
-                    amounts += 1000 * (perf.audience() - 30);
-                }
-                break;
-            case "comedy":
-                amounts = 30000;
-                if (perf.audience() > 20) {
-                    amounts += 10000 + 500 * (perf.audience() - 20);
-                }
-                amounts += 300 * perf.audience();
-                break;
-            default:
-                throw new Error("unknown type: ${play.type}");
-        }
-        return amounts;
-    }
-
 }
