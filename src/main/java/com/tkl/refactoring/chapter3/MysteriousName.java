@@ -1,4 +1,4 @@
-package main.java.com.tkl.refactoring.chapter3;
+package com.tkl.refactoring.chapter3;
 
 public class MysteriousName {
 	// pcweb > FacilityLoginController
