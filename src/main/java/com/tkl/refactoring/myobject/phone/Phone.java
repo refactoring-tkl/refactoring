@@ -5,7 +5,7 @@ import com.tkl.refactoring.myobject.common.Money;
 
 import java.time.Duration;
 
-public class Phone extends AbstractPhone{
+public class Phone implements DiscountPolicy{
     private final Money amount;
     private final Duration seconds;
 
@@ -15,7 +15,7 @@ public class Phone extends AbstractPhone{
     }
 
     @Override
-    protected Money calculateFee(Call call) {
+    public Money calculateFee(Call call) {
         return amount.times(call.getDuration().getSeconds() / seconds.getSeconds());
     }
 }
