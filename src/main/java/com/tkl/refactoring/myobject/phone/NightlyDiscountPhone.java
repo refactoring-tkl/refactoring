@@ -2,12 +2,11 @@ package com.tkl.refactoring.myobject.phone;
 
 import com.tkl.refactoring.myobject.common.Call;
 import com.tkl.refactoring.myobject.common.Money;
-import com.tkl.refactoring.myobject.policy.basic.BasicRatePolicy;
 
 import java.time.Duration;
-import java.util.List;
 
-public class NightlyDiscountPolicy extends AbstractPhone  {
+public class NightlyDiscountPhone implements DiscountPolicy  {
+
     private static final int LATE_NIGHT_HOUR = 22;
 
     private final Money nightlyAmount;
@@ -21,7 +20,7 @@ public class NightlyDiscountPolicy extends AbstractPhone  {
     }
 
     @Override
-    protected Money calculateFee(Call call) {
+    public Money calculateFee(Call call) {
         if (call.getFrom().getHour() >= LATE_NIGHT_HOUR) {
             return nightlyAmount.times(call.getDuration().getSeconds() / seconds.getSeconds());
         }
