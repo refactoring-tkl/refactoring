@@ -1,9 +1,9 @@
 package com.tkl.refactoring.object.phone;
 
+import java.time.Duration;
+
 import com.tkl.refactoring.object.common.Call;
 import com.tkl.refactoring.object.common.Money;
-
-import java.time.Duration;
 
 public class Phone extends AbstractPhone {
     private final Money amount;
@@ -12,6 +12,11 @@ public class Phone extends AbstractPhone {
     public Phone(Money amount, Duration seconds) {
         this.amount = amount;
         this.seconds = seconds;
+    }
+
+    @Override
+    Money applyPolicy(ExtraPolicy extraPolicy, Money currentFee) {
+        return extraPolicy.apply(this, currentFee);
     }
 
     @Override

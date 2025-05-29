@@ -19,10 +19,19 @@ public class NightlyDiscountPhone extends AbstractPhone {
     }
 
     @Override
+    Money applyPolicy(ExtraPolicy extraPolicy, Money currentFee) {
+        return extraPolicy.apply(this, currentFee);
+    }
+
+    @Override
     protected Money calculateFee(Call call) {
-        if (call.getFrom().getHour() >= LATE_NIGHT_HOUR) {
+        if (isLateNightHour(call)) {
             return nightlyAmount.times(call.getDuration().getSeconds() / seconds.getSeconds());
         }
         return regularAmount.times(call.getDuration().getSeconds() / seconds.getSeconds());
+    }
+
+    boolean isLateNightHour(Call call) {
+        return call.getFrom().getHour() >= LATE_NIGHT_HOUR;
     }
 }
