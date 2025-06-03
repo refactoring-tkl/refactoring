@@ -4,11 +4,12 @@ import com.tkl.refactoring.object.common.Call;
 import com.tkl.refactoring.object.common.Money;
 import com.tkl.refactoring.object.policy.addition.RateDiscountablePolicy;
 import com.tkl.refactoring.object.policy.addition.TaxablePolicy;
-import com.tkl.refactoring.object.policy.basic.NightlyDiscountPolicy;
 import com.tkl.refactoring.object.policy.RatePolicy;
 import com.tkl.refactoring.object.policy.basic.FixedFeePolicy;
+import com.tkl.refactoring.object.policy.basic.TimeOfDayDiscountPolicy;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,21 +30,28 @@ public class Phone {
     }
 
     public static void main(String[] args) {
-        Phone taxableRegularPhone = new Phone(
+        Phone taxableFixedFeePhone = new Phone(
                                         new TaxablePolicy(0.05,
                                             new FixedFeePolicy(Money.wons(10), Duration.ofSeconds(10))));
-        Phone taxableRateDiscountableRegularPhone = new Phone(
+        Phone taxableRateDiscountableFixedFeePhone = new Phone(
                                                         new TaxablePolicy(0.05,
                                                             new RateDiscountablePolicy(Money.wons(1000),
                                                                 new FixedFeePolicy(Money.wons(10), Duration.ofSeconds(10)))));
 
-        Phone rateDiscountableTaxableRegularPhone = new Phone(
+        Phone rateDiscountableTaxableFixedFeePhone = new Phone(
                                                         new RateDiscountablePolicy(Money.wons(1000),
                                                             new TaxablePolicy(0.05,
                                                                 new FixedFeePolicy(Money.wons(10), Duration.ofSeconds(10)))));
-        Phone rateDiscountableTaxableNightlyDiscountPhone = new Phone(
+        Phone rateDiscountableTaxableTimeOfDayDiscountPhone = new Phone(
                                                                 new RateDiscountablePolicy(Money.wons(1000),
                                                                     new TaxablePolicy(0.05,
-                                                                        new NightlyDiscountPolicy(Money.wons(5), Money.wons(10), Duration.ofSeconds(10)))));
+                                                                        new TimeOfDayDiscountPolicy(List.of(LocalTime.of(0,0, 0),
+                                                                                                            LocalTime.of(19,0, 0)),
+                                                                                                    List.of(LocalTime.of(19,0, 1),
+                                                                                                            LocalTime.of(23, 59, 59)),
+                                                                                                    List.of(Duration.ofSeconds(10),
+                                                                                                            Duration.ofSeconds(10)),
+                                                                                                    List.of(Money.wons(18),
+                                                                                                            Money.wons(15))))));
     }
 }
