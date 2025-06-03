@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Call {
-    private DateTimeInterval interval;
+    private final DateTimeInterval interval;
 
     public Call(LocalDateTime from, LocalDateTime to) {
         this.interval = DateTimeInterval.of(from, to);
