@@ -68,11 +68,11 @@ public class DateTimeInterval {
         result.add(DateTimeInterval.toMidnight(from));
     }
 
-    private void addMiddleDays(List<DateTimeInterval> result, int days) {
-        for (int loop = 1; loop < days; loop++) {
-            result.add(DateTimeInterval.during(from.toLocalDate().plusDays(loop)));
-        }
-    }
+	private void addMiddleDays(List<DateTimeInterval> result, int days) {
+		for (int loop = 1; loop < days - 1; loop++) {
+			result.add(DateTimeInterval.during(from.toLocalDate().plusDays(loop)));
+		}
+	}
 
     private void addLastDay(List<DateTimeInterval> result) {
         result.add(DateTimeInterval.fromMidnight(to));
