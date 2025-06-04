@@ -7,6 +7,7 @@ import com.tkl.refactoring.object.policy.addition.TaxablePolicy;
 import com.tkl.refactoring.object.policy.RatePolicy;
 import com.tkl.refactoring.object.policy.basic.DayOfWeekDiscountPolicy;
 import com.tkl.refactoring.object.policy.basic.FixedFeePolicy;
+import com.tkl.refactoring.object.policy.basic.IntervalDiscountPolicy;
 import com.tkl.refactoring.object.policy.basic.TimeOfDayDiscountPolicy;
 
 import java.time.Duration;
@@ -62,5 +63,14 @@ public class Phone {
         dayOfWeekDiscountPhone.call(new Call(LocalDateTime.of(2025, 1, 1, 0, 0, 0),
                                                                     LocalDateTime.of(2025, 1, 10, 23, 59, 59)));
         System.out.println(dayOfWeekDiscountPhone.calculateFee());
+
+        Phone intervalDiscountPhone = new Phone(
+                new IntervalDiscountPolicy(1, 3, Money.wons(50), Money.wons(100), Money.wons(150)));
+
+        intervalDiscountPhone.call(new Call(LocalDateTime.of(2025, 1, 1, 0, 0, 0),
+                                   LocalDateTime.of(2025, 1, 1, 0, 3, 10)));
+
+        Money intervalDiscount = intervalDiscountPhone.calculateFee();
+        System.out.println("intervalDiscount = " + intervalDiscount);
     }
 }
