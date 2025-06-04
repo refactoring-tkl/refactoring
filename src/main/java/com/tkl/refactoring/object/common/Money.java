@@ -2,6 +2,9 @@ package com.tkl.refactoring.object.common;
 
 import java.math.BigDecimal;
 
+import lombok.ToString;
+
+@ToString
 public class Money {
     public static final Money ZERO = Money.wons(0);
 
