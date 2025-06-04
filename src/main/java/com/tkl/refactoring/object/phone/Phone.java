@@ -5,10 +5,12 @@ import com.tkl.refactoring.object.common.Money;
 import com.tkl.refactoring.object.policy.addition.RateDiscountablePolicy;
 import com.tkl.refactoring.object.policy.addition.TaxablePolicy;
 import com.tkl.refactoring.object.policy.RatePolicy;
+import com.tkl.refactoring.object.policy.basic.DayOfWeekDiscountPolicy;
 import com.tkl.refactoring.object.policy.basic.FixedFeePolicy;
 import com.tkl.refactoring.object.policy.basic.TimeOfDayDiscountPolicy;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,5 +55,12 @@ public class Phone {
                                                                                                             Duration.ofSeconds(10)),
                                                                                                     List.of(Money.wons(18),
                                                                                                             Money.wons(15))))));
+
+        Phone dayOfWeekDiscountPhone = new Phone(
+                new DayOfWeekDiscountPolicy(Money.wons(100), Money.wons(50), Duration.ofSeconds(60*60*24 - 1)));
+
+        dayOfWeekDiscountPhone.call(new Call(LocalDateTime.of(2025, 1, 1, 0, 0, 0),
+                                                                    LocalDateTime.of(2025, 1, 10, 23, 59, 59)));
+        System.out.println(dayOfWeekDiscountPhone.calculateFee());
     }
 }
