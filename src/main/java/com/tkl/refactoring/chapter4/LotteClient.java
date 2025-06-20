@@ -23,27 +23,18 @@ public class LotteClient {
 		this.baseUrl = baseUrl;
 	}
 
-	public List<Performance> getPerformances() {
+	public ResponseEntity<List<Performance>> getPerformances() {
 		RequestEntity<Void> requestEntity = RequestEntity.get(baseUrl + "/performances")
 														 .accept(MediaType.APPLICATION_JSON)
 														 .build();
-		ResponseEntity<List<Performance>> exchange = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {
+		return restTemplate.exchange(requestEntity, new ParameterizedTypeReference<>() {
 		});
 
-		if (exchange.getStatusCode().is5xxServerError()) {
-			throw new RuntimeException("서버 오류 발생");
-		}
-
-		if (exchange.getStatusCode().is2xxSuccessful()) {
-			return exchange.getBody();
-		}
-
-		return null;
 	}
 
 	@AllArgsConstructor
 	@Getter
-	static class Performance {
+	public static class Performance {
 		private String id;
 		private String name;
 		private LocalDate startDate;
