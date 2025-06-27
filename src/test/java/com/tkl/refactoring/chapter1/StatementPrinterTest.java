@@ -8,6 +8,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.tkl.refactoring.chapter1.statement.application.StatementPrinter;
+
 
 class StatementPrinterTest {
     static final String GIVEN_RESULT = """
